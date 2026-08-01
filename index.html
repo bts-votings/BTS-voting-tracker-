@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOTE TRACKER — Official BTS Voting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0a1a;
+    --bg2:#120c22;
+    --surface:#1a1330;
+    --surface2:#241c3d;
+    --line:#33285a;
+    --purple:#a78bfa;
+    --purple-deep:#7c5cd6;
+    --purple-glow:rgba(167,139,250,.35);
+    --gold:#e8c468;
+    --text:#f4f1fb;
+    --text-dim:#a89bc9;
+    --text-faint:#6f5f96;
+    --urgent:#ff6b8a;
+    --soon:#e8c468;
+    --ok:#6bdcb0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 800px 500px at 15% -10%, rgba(124,92,214,.25), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 110% 10%, rgba(232,196,104,.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--purple-deep);color:#fff;}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:16px;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;margin-bottom:26px;
+  }
+  .brand-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);margin:0 0 8px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;font-size:clamp(28px,4vw,42px);
+    margin:0;line-height:1.02;letter-spacing:-.01em;
+  }
+  h1 span{color:var(--purple);}
+  .tagline{color:var(--text-dim);font-size:14.5px;margin:8px 0 0;max-width:480px;}
+
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .creator-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--bg);
+    background:linear-gradient(120deg,var(--gold),#f3dd9a);
+    padding:7px 12px;border-radius:20px;font-weight:600;
+    white-space:nowrap;box-shadow:0 2px 12px rgba(232,196,104,.25);
+  }
+  .notif-btn{
+    display:flex;align-items:center;gap:7px;
+    background:var(--surface);border:1px solid var(--line);
+    color:var(--text);padding:9px 14px;border-radius:20px;
+    font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;
+    transition:.15s;
+  }
+  .notif-btn:hover{border-color:var(--purple);}
+  .notif-btn.on{border-color:var(--ok);color:var(--ok);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);}
+  .notif-btn.on .dot{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+
+  /* ---------- STATS STRIP ---------- */
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .stat{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:14px 18px;flex:1;min-width:130px;
+  }
+  .stat .n{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;}
+  .stat .l{font-size:11.5px;color:var(--text-dim);letter-spacing:.03em;margin-top:2px;}
+  .stat.urgent .n{color:var(--urgent);}
+  .stat.ok .n{color:var(--ok);}
+
+  /* ---------- CONTROLS ---------- */
+  .controls{
+    display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+    margin-bottom:18px;
+  }
+  .search-box{
+    flex:1;min-width:200px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .search-box input{
+    background:none;border:none;outline:none;color:var(--text);
+    font-size:14px;width:100%;font-family:'Inter',sans-serif;
+  }
+  .search-box input::placeholder{color:var(--text-faint);}
+  select{
+    background:var(--surface);border:1px solid var(--line);color:var(--text);
+    padding:10px 12px;border-radius:12px;font-size:13.5px;font-family:'Inter',sans-serif;
+    cursor:pointer;outline:none;
+  }
+  .add-btn{
+    background:var(--purple-deep);color:#fff;border:none;
+    padding:10px 18px;border-radius:12px;font-weight:600;font-size:13.5px;
+    cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;
+    white-space:nowrap;
+  }
+  .add-btn:hover{background:var(--purple);}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+  .chip{
+    padding:6px 13px;border-radius:20px;font-size:12.5px;
+    border:1px solid var(--line);color:var(--text-dim);cursor:pointer;
+    background:var(--surface);transition:.15s;font-family:'Inter',sans-serif;
+  }
+  .chip:hover{border-color:var(--purple);color:var(--text);}
+  .chip.active{background:var(--purple-deep);border-color:var(--purple-deep);color:#fff;}
+
+  /* ---------- VERIFIED NOTICE ---------- */
+  .verify-notice{
+    display:flex;gap:10px;align-items:flex-start;
+    background:linear-gradient(120deg,rgba(107,220,176,.08),rgba(167,139,250,.06));
+    border:1px solid rgba(107,220,176,.25);
+    border-radius:12px;padding:12px 16px;margin-bottom:24px;
+    font-size:13px;color:var(--text-dim);line-height:1.5;
+  }
+  .verify-notice b{color:var(--ok);}
+
+  /* ---------- CARDS ---------- */
+  .grid{display:flex;flex-direction:column;gap:12px;}
+  .card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:16px;padding:18px 20px;
+    display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;
+    transition:.15s;position:relative;overflow:hidden;
+  }
+  .card:hover{border-color:var(--purple);}
+  .card.priority-high{border-left:3px solid var(--urgent);}
+  .card.priority-medium{border-left:3px solid var(--soon);}
+  .card.priority-low{border-left:3px solid var(--ok);}
+
+  .ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-bg{fill:none;stroke:var(--surface2);stroke-width:5;}
+  .ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s;}
+  .ring-label{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
+  }
+  .ring-label .d{font-size:15px;font-weight:600;line-height:1;}
+  .ring-label .u{font-size:8px;color:var(--text-faint);letter-spacing:.05em;}
+
+  .card-main{min-width:0;}
+  .card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+  .badge{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;
+    padding:2px 8px;border-radius:6px;text-transform:uppercase;font-weight:600;
+  }
+  .badge.official{background:rgba(107,220,176,.15);color:var(--ok);border:1px solid rgba(107,220,176,.3);}
+  .badge.member{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+  .card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16.5px;margin:0;}
+  .card-sub{font-size:13px;color:var(--text-dim);margin:3px 0 0;}
+  .card-meta{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
+  .card-meta span{display:flex;align-items:center;gap:5px;}
+
+  .card-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;}
+  .vote-btn{
+    background:linear-gradient(120deg,var(--purple-deep),var(--purple));
+    color:#fff;border:none;padding:10px 20px;border-radius:10px;
+    font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;
+    text-align:center;white-space:nowrap;font-family:'Inter',sans-serif;
+    box-shadow:0 4px 16px rgba(124,92,214,.3);transition:.15s;
+  }
+  .vote-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,214,.45);}
+  .track-btn{
+    background:none;border:1px solid var(--line);color:var(--text-dim);
+    padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer;
+    font-family:'Inter',sans-serif;white-space:nowrap;transition:.15s;
+  }
+  .track-btn.done{border-color:var(--ok);color:var(--ok);background:rgba(107,220,176,.08);}
+  .streak{font-size:10.5px;color:var(--text-faint);text-align:center;font-family:'JetBrains Mono',monospace;}
+
+  .empty{
+    text-align:center;padding:60px 20px;color:var(--text-faint);
+  }
+  .empty .big{font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--text-dim);margin-bottom:6px;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(6,4,14,.75);
+    display:none;align-items:center;justify-content:center;z-index:50;
+    padding:20px;backdrop-filter:blur(3px);
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:26px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;
+  }
+  .modal h3{font-family:'Space Grotesk',sans-serif;margin:0 0 4px;font-size:20px;}
+  .modal .sub{font-size:12.5px;color:var(--text-dim);margin:0 0 20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;}
+  .field input,.field select{
+    width:100%;background:var(--surface2);border:1px solid var(--line);
+    color:var(--text);padding:10px 12px;border-radius:10px;font-size:13.5px;
+    outline:none;font-family:'Inter',sans-serif;
+  }
+  .field input:focus,.field select:focus{border-color:var(--purple);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .btn-primary{flex:1;background:var(--purple-deep);color:#fff;border:none;padding:11px;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;}
+  .btn-primary:hover{background:var(--purple);}
+  .btn-ghost{background:none;border:1px solid var(--line);color:var(--text-dim);padding:11px 16px;border-radius:10px;cursor:pointer;font-size:13.5px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    margin-top:50px;padding-top:24px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  }
+  .footer-credit{
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    color:var(--gold);letter-spacing:.02em;
+  }
+  .footer-note{font-size:11.5px;color:var(--text-faint);max-width:400px;line-height:1.5;}
+
+  @media (max-width:640px){
+    .card{grid-template-columns:auto 1fr;}
+    .card-actions{grid-column:1 / -1;flex-direction:row;justify-content:flex-end;margin-top:6px;}
+    .ring-wrap{width:52px;height:52px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="brand-eyebrow">〈 vote pulse 〉</p>
+      <h1>Stream & <span>Vote</span> Tracker</h1>
+      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, deadlines and daily reminders.</p>
+    </div>
+    <div class="header-right">
+      <div class="creator-badge">created by @bts_votings on yt</div>
+      <button class="notif-btn" id="notifBtn"><span class="dot"></span><span id="notifLabel">Enable reminders</span></button>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="statActive">–</div><div class="l">ACTIVE VOTES</div></div>
+    <div class="stat urgent"><div class="n" id="statUrgent">–</div><div class="l">ENDING &lt; 48H</div></div>
+    <div class="stat ok"><div class="n" id="statDone">–</div><div class="l">VOTED TODAY</div></div>
+    <div class="stat"><div class="n" id="statStreak">–</div><div class="l">BEST STREAK</div></div>
+  </div>
+
+  <div class="verify-notice">
+    <span>💜</span>
+    <div><b>Official sources only.</b> This tracker only lists votes cast on an award show's own site/app or an artist's verified account. Always double-check the link matches the organizer's official domain or app before voting — never enter your password on a page you don't recognize.</div>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search award show, category, member…">
+    </div>
+    <select id="sortSelect">
+      <option value="deadline">Sort: Deadline (soonest)</option>
+      <option value="priority">Sort: Priority</option>
+      <option value="added">Sort: Recently added</option>
+    </select>
+    <button class="add-btn" id="openAdd">+ Add official vote</button>
+  </div>
+
+  <div class="chips" id="memberChips"></div>
+
+  <div class="grid" id="cardGrid"></div>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Add an official vote</h3>
+    <p class="sub">Only add votes hosted on an award show or artist's own official platform.</p>
+    <div class="field">
+      <label>Award show / campaign name</label>
+      <input type="text" id="f_show" placeholder="e.g. American Music Awards 2026">
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <input type="text" id="f_category" placeholder="e.g. Favorite K-Pop Artist">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Nominee</label>
+        <select id="f_member">
+          <option>BTS (Group / OT7)</option>
+          <option>RM</option><option>Jin</option><option>Suga</option>
+          <option>J-Hope</option><option>Jimin</option><option>V</option><option>Jungkook</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Priority</label>
+        <select id="f_priority">
+          <option value="high">High</option>
+          <option value="medium" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Official voting link</label>
+      <input type="text" id="f_link" placeholder="https://…">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Deadline</label>
+        <input type="date" id="f_deadline">
+      </div>
+      <div class="field">
+        <label>Votes / day (optional)</label>
+        <input type="text" id="f_limit" placeholder="e.g. 30 per platform">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelAdd">Cancel</button>
+      <button class="btn-primary" id="saveAdd">Save vote</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-credit">💜 created by @bts_votings on yt</div>
+  <div class="footer-note">MVP build — data you add is saved to your account only. Verify every link against the official organizer before voting.</div>
+</footer>
+
+<script>
+const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V","Jungkook"];
+
+const SEED = [
+  {
+    id: "seed-amas-2026",
+    show: "American Music Awards 2026",
+    category: "Favorite K-Pop Artist (check official page for all 3 BTS categories)",
+    member: "BTS (Group / OT7)",
+    priority: "high",
+    link: "https://vote.theamas.com/?wid=artist-of-the-year",
+    deadline: "",
+    limit: "30 votes/category/day on site + 30/day via official Instagram comment vote",
+    official: true,
+    added: 1
+  }
+];
+
+let state = {
+  votes: [],
+  activeMember: "All",
+  search: "",
+  sort: "deadline",
+  votedToday: {},   // { voteId: "YYYY-MM-DD" }
+  streaks: {},       // { voteId: number }
+  notifEnabled: false
+};
+
+const STORAGE_KEY = "vote-tracker-data";
+
+async function loadData(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      state.votes = parsed.votes && parsed.votes.length ? parsed.votes : SEED;
+      state.votedToday = parsed.votedToday || {};
+      state.streaks = parsed.streaks || {};
+      state.notifEnabled = parsed.notifEnabled || false;
+    } else {
+      state.votes = SEED;
+    }
+  } catch(e){
+    state.votes = SEED;
+  }
+  render();
+}
+
+async function saveData(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify({
+      votes: state.votes,
+      votedToday: state.votedToday,
+      streaks: state.streaks,
+      notifEnabled: state.notifEnabled
+    }), false);
+  } catch(e){ console.error("save failed", e); }
+}
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function daysLeft(deadline){
+  if(!deadline) return null;
+  const d = new Date(deadline + "T23:59:59");
+  const now = new Date();
+  return (d - now) / (1000*60*60*24);
+}
+
+function fmtCountdown(deadline){
+  if(!deadline) return {big:"—", small:"NO DATE", pct:0, urgent:false};
+  const dl = daysLeft(deadline);
+  if(dl === null) return {big:"—", small:"NO DATE", pct:0, urgent:false};
+  if(dl < 0) return {big:"0", small:"ENDED", pct:0, urgent:false, ended:true};
+  const urgent = dl < 2;
+  if(dl < 1){
+    const hrs = Math.max(0, Math.round(dl*24));
+    return {big:hrs, small:"HRS LEFT", pct: Math.min(1, dl/7), urgent:true};
+  }
+  return {big: Math.ceil(dl), small:"DAYS LEFT", pct: Math.min(1, dl/14), urgent};
+}
+
+function renderRing(pct, urgent, ended){
+  const r = 27, c = 2*Math.PI*r;
+  const offset = c - (ended ? c : pct*c);
+  const color = ended ? "var(--text-faint)" : urgent ? "var(--urgent)" : "var(--purple)";
+  return `<svg width="64" height="64" viewBox="0 0 64 64">
+    <circle class="ring-bg" cx="32" cy="32" r="${r}"></circle>
+    <circle class="ring-fg" cx="32" cy="32" r="${r}" stroke="${color}"
+      stroke-dasharray="${c}" stroke-dashoffset="${offset}"></circle>
+  </svg>`;
+}
+
+function priorityRank(p){ return {high:0, medium:1, low:2}[p] ?? 3; }
+
+function filteredSorted(){
+  let list = state.votes.filter(v=>{
+    const memberOk = state.activeMember === "All" || v.member === state.activeMember;
+    const q = state.search.trim().toLowerCase();
+    const searchOk = !q || (v.show+" "+v.category+" "+v.member).toLowerCase().includes(q);
+    return memberOk && searchOk;
+  });
+  if(state.sort === "deadline"){
+    list.sort((a,b)=>{
+      const da = a.deadline ? new Date(a.deadline) : new Date(8640000000000000);
+      const db = b.deadline ? new Date(b.deadline) : new Date(8640000000000000);
+      return da - db;
+    });
+  } else if(state.sort === "priority"){
+    list.sort((a,b)=> priorityRank(a.priority) - priorityRank(b.priority));
+  } else {
+    list.sort((a,b)=> (b.added||0) - (a.added||0));
+  }
+  return list;
+}
+
+function render(){
+  // chips
+  const chipWrap = document.getElementById("memberChips");
+  chipWrap.innerHTML = MEMBERS.map(m=>
+    `<div class="chip ${state.activeMember===m?'active':''}" data-member="${m}">${m}</div>`
+  ).join("");
+  chipWrap.querySelectorAll(".chip").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      state.activeMember = el.dataset.member;
+      render();
+    });
+  });
+
+  const list = filteredSorted();
+  const grid = document.getElementById("cardGrid");
+
+  if(list.length === 0){
+    grid.innerHTML = `<div class="empty"><div class="big">No votes match</div>Try a different member or search term, or add a new official vote.</div>`;
+  } else {
+    grid.innerHTML = list.map(v=>{
+      const cd = fmtCountdown(v.deadline);
+      const votedToday = state.votedToday[v.id] === todayStr();
+      const streak = state.streaks[v.id] || 0;
+      const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
+      return `
+      <div class="card priority-${v.priority}">
+        <div class="ring-wrap">
+          ${renderRing(cd.pct, cd.urgent, cd.ended)}
+          <div class="ring-label"><div class="d">${cd.big}</div><div class="u">${cd.small}</div></div>
+        </div>
+        <div class="card-main">
+          <div class="card-top">
+            ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
+            <span class="badge member">${v.member}</span>
+          </div>
+          <p class="card-title">${v.show}</p>
+          <p class="card-sub">${v.category}</p>
+          <div class="card-meta">
+            ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : `<span>📅 Check official page for deadline</span>`}
+            ${v.limit ? `<span>🗳️ ${v.limit}</span>` : ''}
+            <span>⚑ ${v.priority.toUpperCase()} priority</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
+          <button class="track-btn ${votedToday?'done':''}" data-id="${v.id}">${votedToday ? '✓ Voted today' : 'Mark voted today'}</button>
+          ${streak>0 ? `<div class="streak">🔥 ${streak} day streak</div>` : ''}
+        </div>
+      </div>`;
+    }).join("");
+
+    grid.querySelectorAll(".track-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.dataset.id;
+        const t = todayStr();
+        if(state.votedToday[id] === t){
+          delete state.votedToday[id];
+          state.streaks[id] = Math.max(0, (state.streaks[id]||1) - 1);
+        } else {
+          state.votedToday[id] = t;
+          state.streaks[id] = (state.streaks[id]||0) + 1;
+        }
+        saveData();
+        render();
+      });
+    });
+  }
+
+  // stats
+  document.getElementById("statActive").textContent = state.votes.filter(v=> !v.deadline || daysLeft(v.deadline) >= 0).length;
+  document.getElementById("statUrgent").textContent = state.votes.filter(v=> v.deadline && daysLeft(v.deadline) >= 0 && daysLeft(v.deadline) < 2).length;
+  document.getElementById("statDone").textContent = Object.values(state.votedToday).filter(d=>d===todayStr()).length;
+  const bestStreak = Math.max(0, ...Object.values(state.streaks));
+  document.getElementById("statStreak").textContent = bestStreak;
+
+  // notif button
+  const notifBtn = document.getElementById("notifBtn");
+  const notifLabel = document.getElementById("notifLabel");
+  notifBtn.classList.toggle("on", state.notifEnabled);
+  notifLabel.textContent = state.notifEnabled ? "Reminders on" : "Enable reminders";
+}
+
+// search / sort
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+  state.search = e.target.value;
+  render();
+});
+document.getElementById("sortSelect").addEventListener("change", (e)=>{
+  state.sort = e.target.value;
+  render();
+});
+
+// modal
+const overlay = document.getElementById("overlay");
+document.getElementById("openAdd").addEventListener("click", ()=> overlay.classList.add("open"));
+document.getElementById("cancelAdd").addEventListener("click", ()=> overlay.classList.remove("open"));
+overlay.addEventListener("click", (e)=>{ if(e.target === overlay) overlay.classList.remove("open"); });
+
+document.getElementById("saveAdd").addEventListener("click", ()=>{
+  const show = document.getElementById("f_show").value.trim();
+  const category = document.getElementById("f_category").value.trim();
+  const member = document.getElementById("f_member").value;
+  const priority = document.getElementById("f_priority").value;
+  const link = document.getElementById("f_link").value.trim();
+  const deadline = document.getElementById("f_deadline").value;
+  const limit = document.getElementById("f_limit").value.trim();
+
+  if(!show || !link){
+    alert("Please add at least the award show name and the official voting link.");
+    return;
+  }
+  state.votes.push({
+    id: "v-" + Date.now(),
+    show, category: category || "—", member, priority, link, deadline, limit,
+    official: true,
+    added: Date.now()
+  });
+  saveData();
+  render();
+  overlay.classList.remove("open");
+  ["f_show","f_category","f_link","f_deadline","f_limit"].forEach(id=> document.getElementById(id).value = "");
+});
+
+// notifications
+document.getElementById("notifBtn").addEventListener("click", async ()=>{
+  if(!("Notification" in window)){
+    alert("This browser doesn't support notifications.");
+    return;
+  }
+  if(state.notifEnabled){
+    state.notifEnabled = false;
+    saveData();
+    render();
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm === "granted"){
+    state.notifEnabled = true;
+    saveData();
+    render();
+    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon. Keep this tab open to receive alerts." });
+    checkDeadlineAlerts();
+  } else {
+    alert("Notifications were blocked. You can still track deadlines visually with the countdown rings.");
+  }
+});
+
+function checkDeadlineAlerts(){
+  if(!state.notifEnabled) return;
+  state.votes.forEach(v=>{
+    if(!v.deadline) return;
+    const dl = daysLeft(v.deadline);
+    if(dl !== null && dl >= 0 && dl < 1 && Notification.permission === "granted"){
+      new Notification("⏰ Voting closes soon!", { body: `${v.show} — ${v.category} closes in under 24h.` });
+    }
+  });
+}
+setInterval(checkDeadlineAlerts, 1000*60*60); // hourly check while tab is open
+
+loadData();
+</script>
+</body>
+</html>
