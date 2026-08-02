@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="google-site-verification" content="P0rndsdmKF4iwPnffP_ZXBvf3VK2X-168iSNiyr3IE0" />
+<head><meta name="google-site-verification" content="Qh4Yis0yspsIvOhlV5DXWqXmmbUWATWNdy3OlP95ClM" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VOTE TRACKER — Official BTS Voting</title>
@@ -112,13 +112,6 @@
     padding:10px 12px;border-radius:12px;font-size:13.5px;font-family:'Inter',sans-serif;
     cursor:pointer;outline:none;
   }
-  .add-btn{
-    background:var(--purple-deep);color:#fff;border:none;
-    padding:10px 18px;border-radius:12px;font-weight:600;font-size:13.5px;
-    cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;
-    white-space:nowrap;
-  }
-  .add-btn:hover{background:var(--purple);}
 
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
   .chip{
@@ -177,53 +170,36 @@
   .card-meta span{display:flex;align-items:center;gap:5px;}
 
   .card-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;}
+  .vote-row{display:flex;gap:8px;align-items:stretch;}
   .vote-btn{
     background:linear-gradient(120deg,var(--purple-deep),var(--purple));
     color:#fff;border:none;padding:10px 20px;border-radius:10px;
     font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;
     text-align:center;white-space:nowrap;font-family:'Inter',sans-serif;
     box-shadow:0 4px 16px rgba(124,92,214,.3);transition:.15s;
+    display:flex;align-items:center;justify-content:center;flex:1;
   }
   .vote-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,214,.45);}
+  .tut-btn{
+    background:var(--surface2);border:1px solid var(--line);color:var(--gold);
+    padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;
+    text-decoration:none;display:flex;align-items:center;justify-content:center;
+    white-space:nowrap;font-family:'Inter',sans-serif;transition:.15s;
+  }
+  .tut-btn:hover{border-color:var(--gold);}
   .track-btn{
     background:none;border:1px solid var(--line);color:var(--text-dim);
     padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer;
-    font-family:'Inter',sans-serif;white-space:nowrap;transition:.15s;
+    font-family:'Inter',sans-serif;white-space:nowrap;transition:.15s;width:100%;
   }
-  .track-btn.done{border-color:var(--ok);color:var(--ok);background:rgba(107,220,176,.08);}
+  .track-btn.done{border-color:var(--ok);color:var(--ok);background:rgba(107,220,176,.08);cursor:default;}
+  .track-btn.cooldown{border-color:var(--line);color:var(--text-faint);cursor:default;}
   .streak{font-size:10.5px;color:var(--text-faint);text-align:center;font-family:'JetBrains Mono',monospace;}
 
   .empty{
     text-align:center;padding:60px 20px;color:var(--text-faint);
   }
   .empty .big{font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--text-dim);margin-bottom:6px;}
-
-  /* ---------- MODAL ---------- */
-  .overlay{
-    position:fixed;inset:0;background:rgba(6,4,14,.75);
-    display:none;align-items:center;justify-content:center;z-index:50;
-    padding:20px;backdrop-filter:blur(3px);
-  }
-  .overlay.open{display:flex;}
-  .modal{
-    background:var(--surface);border:1px solid var(--line);border-radius:18px;
-    padding:26px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;
-  }
-  .modal h3{font-family:'Space Grotesk',sans-serif;margin:0 0 4px;font-size:20px;}
-  .modal .sub{font-size:12.5px;color:var(--text-dim);margin:0 0 20px;}
-  .field{margin-bottom:14px;}
-  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;}
-  .field input,.field select{
-    width:100%;background:var(--surface2);border:1px solid var(--line);
-    color:var(--text);padding:10px 12px;border-radius:10px;font-size:13.5px;
-    outline:none;font-family:'Inter',sans-serif;
-  }
-  .field input:focus,.field select:focus{border-color:var(--purple);}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .modal-actions{display:flex;gap:10px;margin-top:18px;}
-  .btn-primary{flex:1;background:var(--purple-deep);color:#fff;border:none;padding:11px;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;}
-  .btn-primary:hover{background:var(--purple);}
-  .btn-ghost{background:none;border:1px solid var(--line);color:var(--text-dim);padding:11px 16px;border-radius:10px;cursor:pointer;font-size:13.5px;}
 
   /* ---------- FOOTER ---------- */
   footer{
@@ -234,11 +210,11 @@
     font-family:'JetBrains Mono',monospace;font-size:13px;
     color:var(--gold);letter-spacing:.02em;
   }
-  .footer-note{font-size:11.5px;color:var(--text-faint);max-width:400px;line-height:1.5;}
+  .footer-note{font-size:11.5px;color:var(--text-faint);max-width:440px;line-height:1.5;}
 
   @media (max-width:640px){
     .card{grid-template-columns:auto 1fr;}
-    .card-actions{grid-column:1 / -1;flex-direction:row;justify-content:flex-end;margin-top:6px;}
+    .card-actions{grid-column:1 / -1;margin-top:6px;}
     .ring-wrap{width:52px;height:52px;}
   }
 </style>
@@ -250,7 +226,7 @@
     <div>
       <p class="brand-eyebrow">〈 vote pulse 〉</p>
       <h1>Stream & <span>Vote</span> Tracker</h1>
-      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, deadlines and daily reminders.</p>
+      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, tutorials and daily reminders.</p>
     </div>
     <div class="header-right">
       <div class="creator-badge">created by @bts_votings on yt</div>
@@ -261,7 +237,7 @@
   <div class="stats">
     <div class="stat"><div class="n" id="statActive">–</div><div class="l">ACTIVE VOTES</div></div>
     <div class="stat urgent"><div class="n" id="statUrgent">–</div><div class="l">ENDING &lt; 48H</div></div>
-    <div class="stat ok"><div class="n" id="statDone">–</div><div class="l">VOTED TODAY</div></div>
+    <div class="stat ok"><div class="n" id="statDone">–</div><div class="l">READY TO VOTE</div></div>
     <div class="stat"><div class="n" id="statStreak">–</div><div class="l">BEST STREAK</div></div>
   </div>
 
@@ -278,9 +254,7 @@
     <select id="sortSelect">
       <option value="deadline">Sort: Deadline (soonest)</option>
       <option value="priority">Sort: Priority</option>
-      <option value="added">Sort: Recently added</option>
     </select>
-    <button class="add-btn" id="openAdd">+ Add official vote</button>
   </div>
 
   <div class="chips" id="memberChips"></div>
@@ -289,87 +263,59 @@
 
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <h3>Add an official vote</h3>
-    <p class="sub">Only add votes hosted on an award show or artist's own official platform.</p>
-    <div class="field">
-      <label>Award show / campaign name</label>
-      <input type="text" id="f_show" placeholder="e.g. American Music Awards 2026">
-    </div>
-    <div class="field">
-      <label>Category</label>
-      <input type="text" id="f_category" placeholder="e.g. Favorite K-Pop Artist">
-    </div>
-    <div class="row2">
-      <div class="field">
-        <label>Nominee</label>
-        <select id="f_member">
-          <option>BTS (Group / OT7)</option>
-          <option>RM</option><option>Jin</option><option>Suga</option>
-          <option>J-Hope</option><option>Jimin</option><option>V</option><option>Jungkook</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Priority</label>
-        <select id="f_priority">
-          <option value="high">High</option>
-          <option value="medium" selected>Medium</option>
-          <option value="low">Low</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>Official voting link</label>
-      <input type="text" id="f_link" placeholder="https://…">
-    </div>
-    <div class="row2">
-      <div class="field">
-        <label>Deadline</label>
-        <input type="date" id="f_deadline">
-      </div>
-      <div class="field">
-        <label>Votes / day (optional)</label>
-        <input type="text" id="f_limit" placeholder="e.g. 30 per platform">
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-ghost" id="cancelAdd">Cancel</button>
-      <button class="btn-primary" id="saveAdd">Save vote</button>
-    </div>
-  </div>
-</div>
-
 <footer>
   <div class="footer-credit">💜 created by @bts_votings on yt</div>
-  <div class="footer-note">MVP build — data you add is saved to your account only. Verify every link against the official organizer before voting.</div>
+  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes itself is maintained in the code (see the <code>VOTES</code> array) — there's no in-app "add vote" form anymore, so update that array directly when a new official BTS vote opens or an old one closes.</div>
 </footer>
 
 <script>
 const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V","Jungkook"];
 
-const SEED = [
+/* ============================================================
+   OFFICIAL VOTE LIST — edit this array directly to add, update,
+   or remove votes now that the in-app "add vote" form is gone.
+   Only put votes hosted on an award show's or artist's own
+   official platform here (site, official app, verified account).
+
+   Fields:
+     id            unique string, never reuse/change once added
+                    (it's the key your voted/streak history is
+                    stored under)
+     show          award show / campaign name
+     category      what you're voting for
+     member        must be one of the MEMBERS list above
+     priority      "high" | "medium" | "low"
+     link          official voting URL
+     tutorial      (optional) URL to a step-by-step how-to-vote guide
+     deadline      "YYYY-MM-DD" or "" if no fixed date
+     cooldownHours how many hours after marking "voted" before this
+                    vote is shown as available again (most daily
+                    voting apps reset once every 24h — adjust if a
+                    specific platform resets faster/slower)
+     limit         (optional) free-text like "30 votes/day"
+   ============================================================ */
+const VOTES = [
   {
-    id: "seed-amas-2026",
-    show: "American Music Awards 2026",
-    category: "Favorite K-Pop Artist (check official page for all 3 BTS categories)",
+    id: "tma-2026-summer-fannstar",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "Best Music – Summer (\"Come Over\") · Fan N Star Choice – Group · My Star – Male",
     member: "BTS (Group / OT7)",
     priority: "high",
-    link: "https://vote.theamas.com/?wid=artist-of-the-year",
-    deadline: "",
-    limit: "30 votes/category/day on site + 30/day via official Instagram comment vote",
-    official: true,
-    added: 1
+    link: "https://en.fannstar.tf.co.kr/tma",
+    tutorial: "https://bit.ly/BVU_FNS",
+    deadline: "2026-08-03",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true
   }
 ];
 
 let state = {
-  votes: [],
   activeMember: "All",
   search: "",
   sort: "deadline",
-  votedToday: {},   // { voteId: "YYYY-MM-DD" }
-  streaks: {},       // { voteId: number }
+  lastVoted: {},   // { voteId: timestampMs }
+  streaks: {},     // { voteId: number }
   notifEnabled: false
 };
 
@@ -380,15 +326,12 @@ async function loadData(){
     const res = await window.storage.get(STORAGE_KEY, false);
     if(res && res.value){
       const parsed = JSON.parse(res.value);
-      state.votes = parsed.votes && parsed.votes.length ? parsed.votes : SEED;
-      state.votedToday = parsed.votedToday || {};
+      state.lastVoted = parsed.lastVoted || {};
       state.streaks = parsed.streaks || {};
       state.notifEnabled = parsed.notifEnabled || false;
-    } else {
-      state.votes = SEED;
     }
   } catch(e){
-    state.votes = SEED;
+    // no saved data yet, defaults are fine
   }
   render();
 }
@@ -396,16 +339,11 @@ async function loadData(){
 async function saveData(){
   try{
     await window.storage.set(STORAGE_KEY, JSON.stringify({
-      votes: state.votes,
-      votedToday: state.votedToday,
+      lastVoted: state.lastVoted,
       streaks: state.streaks,
       notifEnabled: state.notifEnabled
     }), false);
   } catch(e){ console.error("save failed", e); }
-}
-
-function todayStr(){
-  return new Date().toISOString().slice(0,10);
 }
 
 function daysLeft(deadline){
@@ -441,8 +379,24 @@ function renderRing(pct, urgent, ended){
 
 function priorityRank(p){ return {high:0, medium:1, low:2}[p] ?? 3; }
 
+// ms remaining before this vote can be marked "voted" again
+function cooldownMsLeft(v){
+  const last = state.lastVoted[v.id];
+  if(!last) return 0;
+  const cdMs = (v.cooldownHours || 24) * 3600 * 1000;
+  return Math.max(0, cdMs - (Date.now() - last));
+}
+
+function fmtDuration(ms){
+  const totalMin = Math.ceil(ms / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if(h <= 0) return `${m}m`;
+  return `${h}h ${m}m`;
+}
+
 function filteredSorted(){
-  let list = state.votes.filter(v=>{
+  let list = VOTES.filter(v=>{
     const memberOk = state.activeMember === "All" || v.member === state.activeMember;
     const q = state.search.trim().toLowerCase();
     const searchOk = !q || (v.show+" "+v.category+" "+v.member).toLowerCase().includes(q);
@@ -454,10 +408,8 @@ function filteredSorted(){
       const db = b.deadline ? new Date(b.deadline) : new Date(8640000000000000);
       return da - db;
     });
-  } else if(state.sort === "priority"){
-    list.sort((a,b)=> priorityRank(a.priority) - priorityRank(b.priority));
   } else {
-    list.sort((a,b)=> (b.added||0) - (a.added||0));
+    list.sort((a,b)=> priorityRank(a.priority) - priorityRank(b.priority));
   }
   return list;
 }
@@ -479,13 +431,15 @@ function render(){
   const grid = document.getElementById("cardGrid");
 
   if(list.length === 0){
-    grid.innerHTML = `<div class="empty"><div class="big">No votes match</div>Try a different member or search term, or add a new official vote.</div>`;
+    grid.innerHTML = `<div class="empty"><div class="big">No votes match</div>Try a different member or search term.</div>`;
   } else {
     grid.innerHTML = list.map(v=>{
       const cd = fmtCountdown(v.deadline);
-      const votedToday = state.votedToday[v.id] === todayStr();
+      const msLeft = cooldownMsLeft(v);
+      const inCooldown = msLeft > 0;
       const streak = state.streaks[v.id] || 0;
       const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
+      const safeTut = v.tutorial ? ((v.tutorial.startsWith("http") ? v.tutorial : "https://" + v.tutorial)) : null;
       return `
       <div class="card priority-${v.priority}">
         <div class="ring-wrap">
@@ -506,24 +460,32 @@ function render(){
           </div>
         </div>
         <div class="card-actions">
-          <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
-          <button class="track-btn ${votedToday?'done':''}" data-id="${v.id}">${votedToday ? '✓ Voted today' : 'Mark voted today'}</button>
+          <div class="vote-row">
+            <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
+            ${safeTut ? `<a class="tut-btn" href="${safeTut}" target="_blank" rel="noopener noreferrer" title="How to vote">📖 Tutorial</a>` : ''}
+          </div>
+          <button class="track-btn ${inCooldown ? 'cooldown' : ''}" data-id="${v.id}" ${inCooldown ? 'disabled' : ''}>
+            ${inCooldown ? `✓ Voted · next in ${fmtDuration(msLeft)}` : 'Mark voted'}
+          </button>
           ${streak>0 ? `<div class="streak">🔥 ${streak} day streak</div>` : ''}
         </div>
       </div>`;
     }).join("");
 
-    grid.querySelectorAll(".track-btn").forEach(btn=>{
+    grid.querySelectorAll(".track-btn:not(.cooldown)").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const id = btn.dataset.id;
-        const t = todayStr();
-        if(state.votedToday[id] === t){
-          delete state.votedToday[id];
-          state.streaks[id] = Math.max(0, (state.streaks[id]||1) - 1);
+        const v = VOTES.find(x=>x.id===id);
+        const cdMs = (v?.cooldownHours || 24) * 3600 * 1000;
+        const prevLast = state.lastVoted[id];
+        // keep the streak going if this vote lands within ~2 cooldown windows
+        // of the last one, otherwise it's a fresh start
+        if(prevLast && (Date.now() - prevLast) <= cdMs * 2){
+          state.streaks[id] = (state.streaks[id] || 0) + 1;
         } else {
-          state.votedToday[id] = t;
-          state.streaks[id] = (state.streaks[id]||0) + 1;
+          state.streaks[id] = 1;
         }
+        state.lastVoted[id] = Date.now();
         saveData();
         render();
       });
@@ -531,9 +493,9 @@ function render(){
   }
 
   // stats
-  document.getElementById("statActive").textContent = state.votes.filter(v=> !v.deadline || daysLeft(v.deadline) >= 0).length;
-  document.getElementById("statUrgent").textContent = state.votes.filter(v=> v.deadline && daysLeft(v.deadline) >= 0 && daysLeft(v.deadline) < 2).length;
-  document.getElementById("statDone").textContent = Object.values(state.votedToday).filter(d=>d===todayStr()).length;
+  document.getElementById("statActive").textContent = VOTES.filter(v=> !v.deadline || daysLeft(v.deadline) >= 0).length;
+  document.getElementById("statUrgent").textContent = VOTES.filter(v=> v.deadline && daysLeft(v.deadline) >= 0 && daysLeft(v.deadline) < 2).length;
+  document.getElementById("statDone").textContent = VOTES.filter(v=> cooldownMsLeft(v) === 0).length;
   const bestStreak = Math.max(0, ...Object.values(state.streaks));
   document.getElementById("statStreak").textContent = bestStreak;
 
@@ -545,44 +507,14 @@ function render(){
 }
 
 // search / sort
-document.getElementById("searchInput").addEventListener("input", (e)=>{
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input", (e)=>{
   state.search = e.target.value;
   render();
 });
 document.getElementById("sortSelect").addEventListener("change", (e)=>{
   state.sort = e.target.value;
   render();
-});
-
-// modal
-const overlay = document.getElementById("overlay");
-document.getElementById("openAdd").addEventListener("click", ()=> overlay.classList.add("open"));
-document.getElementById("cancelAdd").addEventListener("click", ()=> overlay.classList.remove("open"));
-overlay.addEventListener("click", (e)=>{ if(e.target === overlay) overlay.classList.remove("open"); });
-
-document.getElementById("saveAdd").addEventListener("click", ()=>{
-  const show = document.getElementById("f_show").value.trim();
-  const category = document.getElementById("f_category").value.trim();
-  const member = document.getElementById("f_member").value;
-  const priority = document.getElementById("f_priority").value;
-  const link = document.getElementById("f_link").value.trim();
-  const deadline = document.getElementById("f_deadline").value;
-  const limit = document.getElementById("f_limit").value.trim();
-
-  if(!show || !link){
-    alert("Please add at least the award show name and the official voting link.");
-    return;
-  }
-  state.votes.push({
-    id: "v-" + Date.now(),
-    show, category: category || "—", member, priority, link, deadline, limit,
-    official: true,
-    added: Date.now()
-  });
-  saveData();
-  render();
-  overlay.classList.remove("open");
-  ["f_show","f_category","f_link","f_deadline","f_limit"].forEach(id=> document.getElementById(id).value = "");
 });
 
 // notifications
@@ -602,24 +534,33 @@ document.getElementById("notifBtn").addEventListener("click", async ()=>{
     state.notifEnabled = true;
     saveData();
     render();
-    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon. Keep this tab open to receive alerts." });
-    checkDeadlineAlerts();
+    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon, or a cooldown has ended. Keep this tab open to receive alerts." });
+    checkAlerts();
   } else {
-    alert("Notifications were blocked. You can still track deadlines visually with the countdown rings.");
+    alert("Notifications were blocked. You can still track deadlines and cooldowns visually with the countdown rings and buttons.");
   }
 });
 
-function checkDeadlineAlerts(){
-  if(!state.notifEnabled) return;
-  state.votes.forEach(v=>{
-    if(!v.deadline) return;
-    const dl = daysLeft(v.deadline);
-    if(dl !== null && dl >= 0 && dl < 1 && Notification.permission === "granted"){
-      new Notification("⏰ Voting closes soon!", { body: `${v.show} — ${v.category} closes in under 24h.` });
+function checkAlerts(){
+  if(!state.notifEnabled || Notification.permission !== "granted") return;
+  VOTES.forEach(v=>{
+    if(v.deadline){
+      const dl = daysLeft(v.deadline);
+      if(dl !== null && dl >= 0 && dl < 1){
+        new Notification("⏰ Voting closes soon!", { body: `${v.show} — ${v.category} closes in under 24h.` });
+      }
+    }
+    if(cooldownMsLeft(v) === 0 && state.lastVoted[v.id]){
+      new Notification("🗳️ Ready to vote again", { body: `${v.show} — ${v.category} is ready for your next vote.` });
     }
   });
 }
-setInterval(checkDeadlineAlerts, 1000*60*60); // hourly check while tab is open
+
+// refresh countdowns/cooldowns periodically without stealing focus from search
+setInterval(()=>{
+  if(document.activeElement !== searchInput) render();
+  checkAlerts();
+}, 60 * 1000);
 
 loadData();
 </script>
