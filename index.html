@@ -40,7 +40,6 @@
 
   .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
 
-  /* ---------- HEADER ---------- */
   header{
     display:flex;justify-content:space-between;align-items:flex-start;
     gap:16px;flex-wrap:wrap;
@@ -80,7 +79,6 @@
   .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);}
   .notif-btn.on .dot{background:var(--ok);box-shadow:0 0 8px var(--ok);}
 
-  /* ---------- STATS STRIP ---------- */
   .stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
   .stat{
     background:var(--surface);border:1px solid var(--line);
@@ -91,7 +89,6 @@
   .stat.urgent .n{color:var(--urgent);}
   .stat.ok .n{color:var(--ok);}
 
-  /* ---------- CONTROLS ---------- */
   .controls{
     display:flex;gap:12px;flex-wrap:wrap;align-items:center;
     margin-bottom:18px;
@@ -122,7 +119,6 @@
   .chip:hover{border-color:var(--purple);color:var(--text);}
   .chip.active{background:var(--purple-deep);border-color:var(--purple-deep);color:#fff;}
 
-  /* ---------- VERIFIED NOTICE ---------- */
   .verify-notice{
     display:flex;gap:10px;align-items:flex-start;
     background:linear-gradient(120deg,rgba(107,220,176,.08),rgba(167,139,250,.06));
@@ -132,7 +128,6 @@
   }
   .verify-notice b{color:var(--ok);}
 
-  /* ---------- CARDS ---------- */
   .grid{display:flex;flex-direction:column;gap:12px;}
   .card{
     background:var(--surface);border:1px solid var(--line);
@@ -183,7 +178,7 @@
   .tut-btn{
     background:var(--surface2);border:1px solid var(--line);color:var(--gold);
     padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;
-    text-decoration:none;display:flex;align-items:center;justify-content:center;
+    display:flex;align-items:center;justify-content:center;
     white-space:nowrap;font-family:'Inter',sans-serif;transition:.15s;
   }
   .tut-btn:hover{border-color:var(--gold);}
@@ -201,7 +196,47 @@
   }
   .empty .big{font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--text-dim);margin-bottom:6px;}
 
-  /* ---------- FOOTER ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(6,4,14,.75);
+    display:none;align-items:center;justify-content:center;z-index:50;
+    padding:20px;backdrop-filter:blur(3px);
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:26px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;
+  }
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px;}
+  .modal h3{font-family:'Space Grotesk',sans-serif;margin:0;font-size:19px;}
+  .modal .sub{font-size:12.5px;color:var(--text-dim);margin:4px 0 18px;}
+  .modal-close{
+    background:none;border:1px solid var(--line);color:var(--text-dim);
+    width:28px;height:28px;border-radius:8px;cursor:pointer;flex-shrink:0;
+    font-size:14px;line-height:1;
+  }
+  .modal-close:hover{border-color:var(--purple);color:var(--text);}
+  .tut-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .tut-steps li{
+    display:flex;gap:12px;align-items:flex-start;
+    font-size:13.5px;line-height:1.5;color:var(--text);
+  }
+  .tut-num{
+    flex-shrink:0;width:24px;height:24px;border-radius:7px;
+    background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);
+    color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tut-foot{
+    margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--text-faint);line-height:1.5;
+  }
+  .modal-vote-link{
+    display:block;text-align:center;margin-top:16px;
+    background:linear-gradient(120deg,var(--purple-deep),var(--purple));
+    color:#fff;padding:11px;border-radius:10px;font-weight:600;font-size:13.5px;
+    text-decoration:none;
+  }
+
   footer{
     margin-top:50px;padding-top:24px;border-top:1px solid var(--line);
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
@@ -226,7 +261,7 @@
     <div>
       <p class="brand-eyebrow">〈 vote pulse 〉</p>
       <h1>Stream & <span>Vote</span> Tracker</h1>
-      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, tutorials and daily reminders.</p>
+      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, built-in tutorials and daily reminders.</p>
     </div>
     <div class="header-right">
       <div class="creator-badge">created by @bts_votings on yt</div>
@@ -263,9 +298,24 @@
 
 </div>
 
+<div class="overlay" id="tutOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="tutTitle">How to vote</h3>
+        <p class="sub" id="tutSub"></p>
+      </div>
+      <button class="modal-close" id="tutClose">✕</button>
+    </div>
+    <ol class="tut-steps" id="tutSteps"></ol>
+    <div class="tut-foot" id="tutFoot"></div>
+    <a class="modal-vote-link" id="tutVoteLink" href="#" target="_blank" rel="noopener noreferrer">Open voting page →</a>
+  </div>
+</div>
+
 <footer>
   <div class="footer-credit">💜 created by @bts_votings on yt</div>
-  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes itself is maintained in the code (see the <code>VOTES</code> array) — there's no in-app "add vote" form anymore, so update that array directly when a new official BTS vote opens or an old one closes.</div>
+  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes and their tutorial steps is maintained in the code (see the <code>VOTES</code> array) — update it directly when a new official BTS vote opens or an old one closes.</div>
 </footer>
 
 <script>
@@ -286,12 +336,13 @@ const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V
      member        must be one of the MEMBERS list above
      priority      "high" | "medium" | "low"
      link          official voting URL
-     tutorial      (optional) URL to a step-by-step how-to-vote guide
+     tutorialSteps array of plain-text steps shown in the in-app
+                    tutorial popup — write your own, in your own
+                    words, per platform
+     tutorialNote  (optional) small print shown under the steps
      deadline      "YYYY-MM-DD" or "" if no fixed date
      cooldownHours how many hours after marking "voted" before this
-                    vote is shown as available again (most daily
-                    voting apps reset once every 24h — adjust if a
-                    specific platform resets faster/slower)
+                    vote is shown as available again
      limit         (optional) free-text like "30 votes/day"
    ============================================================ */
 const VOTES = [
@@ -302,11 +353,22 @@ const VOTES = [
     member: "BTS (Group / OT7)",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
-    tutorial: "https://bit.ly/BVU_FNS",
     deadline: "2026-08-03",
     cooldownHours: 24,
     limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in — you can use an email address or a social account. First-timers will be asked to pick a nickname and finish a quick profile setup.",
+      "From the home screen, find the TMA (The Fact Music Awards) section, usually shown as a banner or listed under the trophy/awards tab.",
+      "Inside TMA, pick the exact category you want to vote in — for example \"Best Music – Summer\", \"Fan N Star Choice – Group\", or \"My Star\". BTS can be nominated in more than one at the same time, so check each one.",
+      "Search for BTS (or the specific member, for My Star) and tap into their entry.",
+      "Build up your voting currency (called \"stars\") by doing the app's daily tasks — things like watching short ads, checking in, or playing a quick quiz/mini-game.",
+      "On BTS's entry page, tap the vote/star button and enter how many stars you want to spend on that vote.",
+      "Confirm the vote. If a \"video vote\" option is shown, that's a separate way to add votes by watching an ad clip — use it too if you want to maximize votes.",
+      "Repeat daily until the category closes. Stars usually don't roll over once voting ends, so try to spend what you've earned before the deadline."
+    ],
+    tutorialNote: "These steps describe the general flow of the FAN N STAR app as of writing — exact button placement can shift with app updates, but the overall path (log in → find category → earn stars → vote) stays the same."
   }
 ];
 
@@ -314,8 +376,8 @@ let state = {
   activeMember: "All",
   search: "",
   sort: "deadline",
-  lastVoted: {},   // { voteId: timestampMs }
-  streaks: {},     // { voteId: number }
+  lastVoted: {},
+  streaks: {},
   notifEnabled: false
 };
 
@@ -379,7 +441,6 @@ function renderRing(pct, urgent, ended){
 
 function priorityRank(p){ return {high:0, medium:1, low:2}[p] ?? 3; }
 
-// ms remaining before this vote can be marked "voted" again
 function cooldownMsLeft(v){
   const last = state.lastVoted[v.id];
   if(!last) return 0;
@@ -415,7 +476,6 @@ function filteredSorted(){
 }
 
 function render(){
-  // chips
   const chipWrap = document.getElementById("memberChips");
   chipWrap.innerHTML = MEMBERS.map(m=>
     `<div class="chip ${state.activeMember===m?'active':''}" data-member="${m}">${m}</div>`
@@ -439,7 +499,7 @@ function render(){
       const inCooldown = msLeft > 0;
       const streak = state.streaks[v.id] || 0;
       const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
-      const safeTut = v.tutorial ? ((v.tutorial.startsWith("http") ? v.tutorial : "https://" + v.tutorial)) : null;
+      const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
       return `
       <div class="card priority-${v.priority}">
         <div class="ring-wrap">
@@ -462,7 +522,7 @@ function render(){
         <div class="card-actions">
           <div class="vote-row">
             <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
-            ${safeTut ? `<a class="tut-btn" href="${safeTut}" target="_blank" rel="noopener noreferrer" title="How to vote">📖 Tutorial</a>` : ''}
+            ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="How to vote">📖 Tutorial</button>` : ''}
           </div>
           <button class="track-btn ${inCooldown ? 'cooldown' : ''}" data-id="${v.id}" ${inCooldown ? 'disabled' : ''}>
             ${inCooldown ? `✓ Voted · next in ${fmtDuration(msLeft)}` : 'Mark voted'}
@@ -478,8 +538,6 @@ function render(){
         const v = VOTES.find(x=>x.id===id);
         const cdMs = (v?.cooldownHours || 24) * 3600 * 1000;
         const prevLast = state.lastVoted[id];
-        // keep the streak going if this vote lands within ~2 cooldown windows
-        // of the last one, otherwise it's a fresh start
         if(prevLast && (Date.now() - prevLast) <= cdMs * 2){
           state.streaks[id] = (state.streaks[id] || 0) + 1;
         } else {
@@ -490,23 +548,42 @@ function render(){
         render();
       });
     });
+
+    grid.querySelectorAll(".tut-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=> openTutorial(btn.dataset.id));
+    });
   }
 
-  // stats
   document.getElementById("statActive").textContent = VOTES.filter(v=> !v.deadline || daysLeft(v.deadline) >= 0).length;
   document.getElementById("statUrgent").textContent = VOTES.filter(v=> v.deadline && daysLeft(v.deadline) >= 0 && daysLeft(v.deadline) < 2).length;
   document.getElementById("statDone").textContent = VOTES.filter(v=> cooldownMsLeft(v) === 0).length;
   const bestStreak = Math.max(0, ...Object.values(state.streaks));
   document.getElementById("statStreak").textContent = bestStreak;
 
-  // notif button
   const notifBtn = document.getElementById("notifBtn");
   const notifLabel = document.getElementById("notifLabel");
   notifBtn.classList.toggle("on", state.notifEnabled);
   notifLabel.textContent = state.notifEnabled ? "Reminders on" : "Enable reminders";
 }
 
-// search / sort
+const tutOverlay = document.getElementById("tutOverlay");
+function openTutorial(voteId){
+  const v = VOTES.find(x=>x.id===voteId);
+  if(!v || !Array.isArray(v.tutorialSteps)) return;
+  document.getElementById("tutTitle").textContent = `How to vote — ${v.show}`;
+  document.getElementById("tutSub").textContent = v.category;
+  document.getElementById("tutSteps").innerHTML = v.tutorialSteps.map((step, i)=>
+    `<li><span class="tut-num">${i+1}</span><span>${step}</span></li>`
+  ).join("");
+  document.getElementById("tutFoot").textContent = v.tutorialNote || "";
+  document.getElementById("tutFoot").style.display = v.tutorialNote ? "block" : "none";
+  const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
+  document.getElementById("tutVoteLink").href = v.link ? safeLink : "#";
+  tutOverlay.classList.add("open");
+}
+document.getElementById("tutClose").addEventListener("click", ()=> tutOverlay.classList.remove("open"));
+tutOverlay.addEventListener("click", (e)=>{ if(e.target === tutOverlay) tutOverlay.classList.remove("open"); });
+
 const searchInput = document.getElementById("searchInput");
 searchInput.addEventListener("input", (e)=>{
   state.search = e.target.value;
@@ -517,7 +594,6 @@ document.getElementById("sortSelect").addEventListener("change", (e)=>{
   render();
 });
 
-// notifications
 document.getElementById("notifBtn").addEventListener("click", async ()=>{
   if(!("Notification" in window)){
     alert("This browser doesn't support notifications.");
@@ -556,7 +632,6 @@ function checkAlerts(){
   });
 }
 
-// refresh countdowns/cooldowns periodically without stealing focus from search
 setInterval(()=>{
   if(document.activeElement !== searchInput) render();
   checkAlerts();
