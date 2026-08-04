@@ -88,6 +88,24 @@
   .stat .l{font-size:11.5px;color:var(--text-dim);letter-spacing:.03em;margin-top:2px;}
   .stat.urgent .n{color:var(--urgent);}
   .stat.ok .n{color:var(--ok);}
+  .stat.upcoming .n{color:var(--gold);}
+
+  /* ---- Tabs (Active / Upcoming) ---- */
+  .tabbar{display:flex;gap:8px;margin-bottom:18px;border-bottom:1px solid var(--line);}
+  .tab{
+    padding:10px 4px;margin-bottom:-1px;
+    border-bottom:2px solid transparent;
+    color:var(--text-dim);font-size:14px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;
+    padding-left:6px;padding-right:6px;
+  }
+  .tab .count{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    background:var(--surface2);color:var(--text-dim);
+    padding:1px 7px;border-radius:10px;
+  }
+  .tab.active{color:var(--text);border-bottom-color:var(--purple);}
+  .tab.active .count{background:var(--purple-deep);color:#fff;}
 
   .controls{
     display:flex;gap:12px;flex-wrap:wrap;align-items:center;
@@ -139,6 +157,7 @@
   .card.priority-high{border-left:3px solid var(--urgent);}
   .card.priority-medium{border-left:3px solid var(--soon);}
   .card.priority-low{border-left:3px solid var(--ok);}
+  .card.is-upcoming{border-left:3px solid var(--gold);}
 
   .ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
   .ring-wrap svg{transform:rotate(-90deg);}
@@ -151,6 +170,13 @@
   .ring-label .d{font-size:15px;font-weight:600;line-height:1;}
   .ring-label .u{font-size:8px;color:var(--text-faint);letter-spacing:.05em;}
 
+  .upcoming-badge-wrap{
+    width:64px;height:64px;flex-shrink:0;border-radius:50%;
+    background:rgba(232,196,104,.1);border:1px solid rgba(232,196,104,.3);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+  }
+
   .card-main{min-width:0;}
   .card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
   .badge{
@@ -159,6 +185,7 @@
   }
   .badge.official{background:rgba(107,220,176,.15);color:var(--ok);border:1px solid rgba(107,220,176,.3);}
   .badge.member{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+  .badge.upcoming{background:rgba(232,196,104,.15);color:var(--gold);border:1px solid rgba(232,196,104,.3);}
   .card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16.5px;margin:0;}
   .card-sub{font-size:13px;color:var(--text-dim);margin:3px 0 0;}
   .card-meta{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
@@ -175,6 +202,11 @@
     display:flex;align-items:center;justify-content:center;flex:1;
   }
   .vote-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,214,.45);}
+  .vote-btn.info-link{
+    background:var(--surface2);color:var(--gold);
+    box-shadow:none;border:1px solid var(--line);
+  }
+  .vote-btn.info-link:hover{border-color:var(--gold);transform:none;}
   .tut-btn{
     background:var(--surface2);border:1px solid var(--line);color:var(--gold);
     padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;
@@ -250,7 +282,7 @@
   @media (max-width:640px){
     .card{grid-template-columns:auto 1fr;}
     .card-actions{grid-column:1 / -1;margin-top:6px;}
-    .ring-wrap{width:52px;height:52px;}
+    .ring-wrap,.upcoming-badge-wrap{width:52px;height:52px;}
   }
 </style>
 </head>
@@ -261,7 +293,7 @@
     <div>
       <p class="brand-eyebrow">〈 vote pulse 〉</p>
       <h1>Stream & <span>Vote</span> Tracker</h1>
-      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, built-in tutorials and daily reminders.</p>
+      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, built-in tutorials and daily reminders. Ended votes disappear automatically; upcoming ones get their own tab.</p>
     </div>
     <div class="header-right">
       <div class="creator-badge">created by @bts_votings on yt</div>
@@ -272,6 +304,7 @@
   <div class="stats">
     <div class="stat"><div class="n" id="statActive">–</div><div class="l">ACTIVE VOTES</div></div>
     <div class="stat urgent"><div class="n" id="statUrgent">–</div><div class="l">ENDING &lt; 48H</div></div>
+    <div class="stat upcoming"><div class="n" id="statUpcoming">–</div><div class="l">UPCOMING</div></div>
     <div class="stat ok"><div class="n" id="statDone">–</div><div class="l">READY TO VOTE</div></div>
     <div class="stat"><div class="n" id="statStreak">–</div><div class="l">BEST STREAK</div></div>
   </div>
@@ -279,6 +312,11 @@
   <div class="verify-notice">
     <span>💜</span>
     <div><b>Official sources only.</b> This tracker only lists votes cast on an award show's own site/app or an artist's verified account. Always double-check the link matches the organizer's official domain or app before voting — never enter your password on a page you don't recognize.</div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab" data-tab="active">🟢 Active <span class="count" id="countActive">0</span></div>
+    <div class="tab" data-tab="upcoming">🔜 Upcoming <span class="count" id="countUpcoming">0</span></div>
   </div>
 
   <div class="controls">
@@ -315,7 +353,7 @@
 
 <footer>
   <div class="footer-credit">💜 created by @bts_votings on yt</div>
-  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes and their tutorial steps is maintained in the code (see the <code>VOTES</code> array) — update it directly when a new official BTS vote opens or an old one closes.</div>
+  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes, statuses and tutorial steps is maintained in the code (see the <code>VOTES</code> array) — update it directly when a new official BTS vote opens, moves to upcoming, or closes.</div>
 </footer>
 
 <script>
@@ -323,33 +361,52 @@ const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V
 
 /* ============================================================
    OFFICIAL VOTE LIST — edit this array directly to add, update,
-   or remove votes now that the in-app "add vote" form is gone.
-   Only put votes hosted on an award show's or artist's own
-   official platform here (site, official app, verified account).
+   or remove votes. Only put votes hosted on an award show's or
+   artist's own official platform here (site, official app,
+   verified account) — never a reposted/unofficial link.
+
+   STATUS MODEL (new):
+     Each vote is shown as "active" or "upcoming" automatically.
+     - If `deadline` has passed, the vote is ALWAYS treated as
+       ended and is hidden from both tabs — no manual cleanup
+       needed. It stays in this array (so your streak/history
+       data for it still resolves), it just won't render.
+     - If `status: "upcoming"` is set, it shows in the Upcoming
+       tab instead of Active — use this for shows that are
+       confirmed but haven't opened voting yet (no live link).
+     - Otherwise (no deadline passed, no upcoming flag) it shows
+       as Active.
 
    Fields:
      id            unique string, never reuse/change once added
                     (it's the key your voted/streak history is
                     stored under)
      show          award show / campaign name
-     category      what you're voting for
+     category      what you're voting for (use "TBA" if not
+                    announced yet)
      member        must be one of the MEMBERS list above
      priority      "high" | "medium" | "low"
-     link          official voting URL
-     tutorialSteps array of plain-text steps shown in the in-app
-                    tutorial popup — write your own, in your own
-                    words, per platform
+     status        omit for active, or set "upcoming"
+     link          official voting URL (active) — omit or use an
+                    official INFO page for upcoming shows, since
+                    there's no vote page live yet
+     ceremonyDate  "YYYY-MM-DD" — used for the Upcoming card
+     opensNote     free text like "Voting opens ~ Oct 2026" for
+                    upcoming shows without a confirmed date
+     tutorialSteps array of plain-text steps for the in-app
+                    tutorial popup — leave empty ([]) for
+                    upcoming shows until the real flow is known
      tutorialNote  (optional) small print shown under the steps
-     deadline      "YYYY-MM-DD" or "" if no fixed date
-     cooldownHours how many hours after marking "voted" before this
-                    vote is shown as available again
+     deadline      "YYYY-MM-DD" or "" if no fixed date yet
+     cooldownHours how many hours after marking "voted" before
+                    this vote is shown as available again
      limit         (optional) free-text like "30 votes/day"
    ============================================================ */
 const VOTES = [
   {
     id: "tma-2026-summer-fannstar",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "Best Music – Summer (\"Come Over\") · Fan N Star Choice – Group · My Star – Male",
+    category: "Best Music – Summer (\"SWIM\") — final round",
     member: "BTS (Group / OT7)",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -361,24 +418,316 @@ const VOTES = [
       "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
       "Sign up or log in — you can use an email address or a social account. First-timers will be asked to pick a nickname and finish a quick profile setup.",
       "From the home screen, find the TMA (The Fact Music Awards) section, usually shown as a banner or listed under the trophy/awards tab.",
-      "Inside TMA, pick the exact category you want to vote in — for example \"Best Music – Summer\", \"Fan N Star Choice – Group\", or \"My Star\". BTS can be nominated in more than one at the same time, so check each one.",
-      "Search for BTS (or the specific member, for My Star) and tap into their entry.",
+      "Inside TMA, go to the \"Best Music – Summer\" category.",
+      "Search for BTS and tap into their entry.",
       "Build up your voting currency (called \"stars\") by doing the app's daily tasks — things like watching short ads, checking in, or playing a quick quiz/mini-game.",
       "On BTS's entry page, tap the vote/star button and enter how many stars you want to spend on that vote.",
       "Confirm the vote. If a \"video vote\" option is shown, that's a separate way to add votes by watching an ad clip — use it too if you want to maximize votes.",
       "Repeat daily until the category closes. Stars usually don't roll over once voting ends, so try to spend what you've earned before the deadline."
     ],
-    tutorialNote: "These steps describe the general flow of the FAN N STAR app as of writing — exact button placement can shift with app updates, but the overall path (log in → find category → earn stars → vote) stays the same."
+    tutorialNote: "This trophy round closed Aug 3, 12PM KST — kept here as history, hidden automatically since it has ended. TMA runs Best Music voting quarterly, so a Fall round will open later in the year; add it as a new entry when it does. NOTE: this used to also list Fan N Star Choice – Group and My Star – Male under one deadline, which was wrong — those run on separate schedules, see the new entries below."
+  },
+
+  /* ------------------------------------------------------------
+     TMA — My Star (Male), 2nd round. Confirmed: all 7 BTS members
+     are nominated (Jin, V, J-Hope, Jimin, Jungkook, Suga, RM all
+     appeared in the prelim rankings). Prelim ran Jul 20–Aug 3;
+     the 2nd/final round opened Aug 3 per FANNSTAR's own voting
+     guide. No confirmed closing date yet for this round — leave
+     `deadline` blank until The Fact announces it, then add it so
+     auto-hide kicks in.
+  ------------------------------------------------------------ */
+  {
+    id: "tma-2026-mystar-jin",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "Jin",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for Jin and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-v",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "V",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for V and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-jhope",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "J-Hope",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for J-Hope and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-jimin",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "Jimin",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for Jimin and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-jungkook",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "Jungkook",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for Jungkook and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-suga",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "Suga",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for Suga and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+  {
+    id: "tma-2026-mystar-rm",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "My Star – Male — 2nd round voting",
+    member: "RM",
+    priority: "high",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
+    official: true,
+    tutorialSteps: [
+      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
+      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
+      "Go to the TMA section, then find the \"My Star (Male)\" category.",
+      "Search for RM and tap into his entry.",
+      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
+      "Tap vote, enter how many stars to spend, and confirm.",
+      "This is the 2nd/final round — repeat daily until the category closes."
+    ],
+    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+  },
+
+  /* ------------------------------------------------------------
+     TMA — FANNSTAR Choice (Group). 1st round ran Jul 20–Aug 3;
+     BTS placed 1st in that round. 2nd round is confirmed to open
+     Aug 18 — marking as upcoming until then.
+  ------------------------------------------------------------ */
+  {
+    id: "tma-2026-choice-group",
+    show: "2026 The Fact Music Awards (TMA)",
+    category: "FANNSTAR Choice Award — Group (2nd round)",
+    member: "BTS (Group / OT7)",
+    priority: "medium",
+    status: "upcoming",
+    opensNote: "1st round closed Aug 3 with BTS in 1st place. 2nd round voting opens Aug 18 — no live link yet.",
+    link: "https://en.fannstar.tf.co.kr/tma",
+    cooldownHours: 24,
+    official: true,
+    tutorialSteps: [],
+    tutorialNote: "Flip this entry's status to active and add tutorialSteps once the Aug 18 round is confirmed open."
+  },
+  {
+    id: "mma-2026-melon",
+    show: "2026 Melon Music Awards (MMA)",
+    category: "TBA — categories not yet announced",
+    member: "BTS (Group / OT7)",
+    priority: "medium",
+    status: "upcoming",
+    ceremonyDate: "2026-11-14",
+    opensNote: "Ceremony confirmed for Nov 14–15, 2026 at Gocheok Sky Dome, Seoul. Pre-event TOP10 and category voting typically opens a few weeks before the show — no live vote link yet.",
+    link: "https://www.melon.com/mma/info.htm",
+    cooldownHours: 24,
+    official: true,
+    tutorialSteps: [],
+    tutorialNote: "Voting hasn't opened, so there's no confirmed step-by-step yet. In past years MMA voting has run through the Melon app/site (Top 10, category, and Global-K Chart-linked awards) — once this year's flow is confirmed, add the real steps here and flip this entry's status to active."
+  },
+
+  /* ------------------------------------------------------------
+     SOLO MEMBER VOTING — STARNEWS Star Ranking (Star Idol Male)
+     This is the one currently-live, verifiable recurring poll
+     where individual members (not the group) are voted for by
+     name. It's run by the Korean outlet STARNEWS through its own
+     site/STARPOLL app — not an award show, but it is the
+     organizer's own official platform, and as of June 2026 the
+     results also feed into the AAA 2026 Star Ranking award.
+     It has no fixed end date — it's a rolling weekly poll
+     (Mon 3:01PM KST → next Mon 3:00PM KST), so no `deadline` is
+     set below on purpose; that keeps it always in Active instead
+     of getting auto-hidden as "ended" after each weekly cycle.
+     Only Jimin, Jin, V and Jungkook turned up in recent ranking
+     results — add RM/Suga/J-Hope entries too if you confirm
+     they're active in this poll.
+     NOT added: the "voteforpjm" style carrd.co fan pages that
+     tell people to install an unofficial APK and register
+     multiple accounts. That breaks INKIGAYO's own voting terms
+     and this tracker's "official sources only" rule — worth
+     steering fans away from, not toward.
+  ------------------------------------------------------------ */
+  {
+    id: "starranking-2026-jimin",
+    show: "STARNEWS Star Ranking — Star Idol (Male)",
+    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
+    member: "Jimin",
+    priority: "medium",
+    link: "https://www.starnewskorea.com/en",
+    cooldownHours: 24,
+    official: true,
+    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    tutorialSteps: [
+      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
+      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
+      "Search for Jimin and open his profile.",
+      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
+      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
+    ],
+    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
+  },
+  {
+    id: "starranking-2026-jin",
+    show: "STARNEWS Star Ranking — Star Idol (Male)",
+    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
+    member: "Jin",
+    priority: "medium",
+    link: "https://www.starnewskorea.com/en",
+    cooldownHours: 24,
+    official: true,
+    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    tutorialSteps: [
+      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
+      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
+      "Search for Jin and open his profile.",
+      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
+      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
+    ],
+    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
+  },
+  {
+    id: "starranking-2026-v",
+    show: "STARNEWS Star Ranking — Star Idol (Male)",
+    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
+    member: "V",
+    priority: "medium",
+    link: "https://www.starnewskorea.com/en",
+    cooldownHours: 24,
+    official: true,
+    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    tutorialSteps: [
+      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
+      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
+      "Search for V and open his profile.",
+      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
+      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
+    ],
+    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
+  },
+  {
+    id: "starranking-2026-jungkook",
+    show: "STARNEWS Star Ranking — Star Idol (Male)",
+    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
+    member: "Jungkook",
+    priority: "medium",
+    link: "https://www.starnewskorea.com/en",
+    cooldownHours: 24,
+    official: true,
+    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    tutorialSteps: [
+      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
+      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
+      "Search for Jungkook and open his profile.",
+      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
+      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
+    ],
+    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
   }
 ];
 
 let state = {
+  activeTab: "active",
   activeMember: "All",
   search: "",
   sort: "deadline",
   lastVoted: {},
   streaks: {},
-  notifEnabled: false
+  notifEnabled: false,
+  seenUpcomingIds: []
 };
 
 const STORAGE_KEY = "vote-tracker-data";
@@ -391,6 +740,7 @@ async function loadData(){
       state.lastVoted = parsed.lastVoted || {};
       state.streaks = parsed.streaks || {};
       state.notifEnabled = parsed.notifEnabled || false;
+      state.seenUpcomingIds = parsed.seenUpcomingIds || [];
     }
   } catch(e){
     // no saved data yet, defaults are fine
@@ -403,7 +753,8 @@ async function saveData(){
     await window.storage.set(STORAGE_KEY, JSON.stringify({
       lastVoted: state.lastVoted,
       streaks: state.streaks,
-      notifEnabled: state.notifEnabled
+      notifEnabled: state.notifEnabled,
+      seenUpcomingIds: state.seenUpcomingIds
     }), false);
   } catch(e){ console.error("save failed", e); }
 }
@@ -413,6 +764,19 @@ function daysLeft(deadline){
   const d = new Date(deadline + "T23:59:59");
   const now = new Date();
   return (d - now) / (1000*60*60*24);
+}
+
+function isEnded(v){
+  if(!v.deadline) return false;
+  return daysLeft(v.deadline) < 0;
+}
+
+// Single source of truth for what tab a vote belongs in.
+// Ended always wins and hides the vote from BOTH tabs.
+function getStatus(v){
+  if(isEnded(v)) return "ended";
+  if(v.status === "upcoming") return "upcoming";
+  return "active";
 }
 
 function fmtCountdown(deadline){
@@ -426,6 +790,14 @@ function fmtCountdown(deadline){
     return {big:hrs, small:"HRS LEFT", pct: Math.min(1, dl/7), urgent:true};
   }
   return {big: Math.ceil(dl), small:"DAYS LEFT", pct: Math.min(1, dl/14), urgent};
+}
+
+function fmtCeremonyCountdown(ceremonyDate){
+  if(!ceremonyDate) return null;
+  const d = new Date(ceremonyDate + "T00:00:00");
+  const days = Math.ceil((d - new Date()) / (1000*60*60*24));
+  if(days < 0) return null;
+  return days;
 }
 
 function renderRing(pct, urgent, ended){
@@ -458,11 +830,20 @@ function fmtDuration(ms){
 
 function filteredSorted(){
   let list = VOTES.filter(v=>{
+    if(getStatus(v) !== state.activeTab) return false;
     const memberOk = state.activeMember === "All" || v.member === state.activeMember;
     const q = state.search.trim().toLowerCase();
     const searchOk = !q || (v.show+" "+v.category+" "+v.member).toLowerCase().includes(q);
     return memberOk && searchOk;
   });
+  if(state.activeTab === "upcoming"){
+    list.sort((a,b)=>{
+      const da = a.ceremonyDate ? new Date(a.ceremonyDate) : new Date(8640000000000000);
+      const db = b.ceremonyDate ? new Date(b.ceremonyDate) : new Date(8640000000000000);
+      return da - db;
+    });
+    return list;
+  }
   if(state.sort === "deadline"){
     list.sort((a,b)=>{
       const da = a.deadline ? new Date(a.deadline) : new Date(8640000000000000);
@@ -475,7 +856,85 @@ function filteredSorted(){
   return list;
 }
 
+function renderActiveCard(v){
+  const cd = fmtCountdown(v.deadline);
+  const msLeft = cooldownMsLeft(v);
+  const inCooldown = msLeft > 0;
+  const streak = state.streaks[v.id] || 0;
+  const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
+  const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
+  return `
+  <div class="card priority-${v.priority}">
+    <div class="ring-wrap">
+      ${renderRing(cd.pct, cd.urgent, cd.ended)}
+      <div class="ring-label"><div class="d">${cd.big}</div><div class="u">${cd.small}</div></div>
+    </div>
+    <div class="card-main">
+      <div class="card-top">
+        ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
+        <span class="badge member">${v.member}</span>
+      </div>
+      <p class="card-title">${v.show}</p>
+      <p class="card-sub">${v.category}</p>
+      <div class="card-meta">
+        ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : `<span>📅 Check official page for deadline</span>`}
+        ${v.limit ? `<span>🗳️ ${v.limit}</span>` : ''}
+        <span>⚑ ${v.priority.toUpperCase()} priority</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <div class="vote-row">
+        <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
+        ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="How to vote">📖 Tutorial</button>` : ''}
+      </div>
+      <button class="track-btn ${inCooldown ? 'cooldown' : ''}" data-id="${v.id}" ${inCooldown ? 'disabled' : ''}>
+        ${inCooldown ? `✓ Voted · next in ${fmtDuration(msLeft)}` : 'Mark voted'}
+      </button>
+      ${streak>0 ? `<div class="streak">🔥 ${streak} day streak</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderUpcomingCard(v){
+  const daysToCeremony = fmtCeremonyCountdown(v.ceremonyDate);
+  const safeLink = v.link ? ((v.link || "").startsWith("http") ? v.link : "https://" + v.link) : null;
+  const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
+  return `
+  <div class="card is-upcoming">
+    <div class="upcoming-badge-wrap">🔜</div>
+    <div class="card-main">
+      <div class="card-top">
+        ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
+        <span class="badge upcoming">Not open yet</span>
+        <span class="badge member">${v.member}</span>
+      </div>
+      <p class="card-title">${v.show}</p>
+      <p class="card-sub">${v.category}</p>
+      <div class="card-meta">
+        ${v.ceremonyDate ? `<span>🎤 Ceremony ${v.ceremonyDate}${daysToCeremony !== null ? ` · ${daysToCeremony}d away` : ''}</span>` : ''}
+      </div>
+      ${v.opensNote ? `<p class="card-sub" style="margin-top:8px;">${v.opensNote}</p>` : ''}
+    </div>
+    <div class="card-actions">
+      <div class="vote-row">
+        ${safeLink ? `<a class="vote-btn info-link" href="${safeLink}" target="_blank" rel="noopener noreferrer">Official info →</a>` : `<span class="vote-btn info-link" style="cursor:default;">Link TBA</span>`}
+        ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="Preview">📖 Preview</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
 function render(){
+  // tabs
+  document.querySelectorAll(".tab").forEach(el=>{
+    el.classList.toggle("active", el.dataset.tab === state.activeTab);
+  });
+
+  const activeCount = VOTES.filter(v=>getStatus(v)==="active").length;
+  const upcomingCount = VOTES.filter(v=>getStatus(v)==="upcoming").length;
+  document.getElementById("countActive").textContent = activeCount;
+  document.getElementById("countUpcoming").textContent = upcomingCount;
+
   const chipWrap = document.getElementById("memberChips");
   chipWrap.innerHTML = MEMBERS.map(m=>
     `<div class="chip ${state.activeMember===m?'active':''}" data-member="${m}">${m}</div>`
@@ -487,50 +946,18 @@ function render(){
     });
   });
 
+  document.getElementById("sortSelect").style.display = state.activeTab === "upcoming" ? "none" : "";
+
   const list = filteredSorted();
   const grid = document.getElementById("cardGrid");
 
   if(list.length === 0){
-    grid.innerHTML = `<div class="empty"><div class="big">No votes match</div>Try a different member or search term.</div>`;
+    const msg = state.activeTab === "upcoming"
+      ? "No upcoming votes match — check back as new shows get confirmed."
+      : "No votes match — try a different member, search term, or check the Upcoming tab.";
+    grid.innerHTML = `<div class="empty"><div class="big">Nothing here yet</div>${msg}</div>`;
   } else {
-    grid.innerHTML = list.map(v=>{
-      const cd = fmtCountdown(v.deadline);
-      const msLeft = cooldownMsLeft(v);
-      const inCooldown = msLeft > 0;
-      const streak = state.streaks[v.id] || 0;
-      const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
-      const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
-      return `
-      <div class="card priority-${v.priority}">
-        <div class="ring-wrap">
-          ${renderRing(cd.pct, cd.urgent, cd.ended)}
-          <div class="ring-label"><div class="d">${cd.big}</div><div class="u">${cd.small}</div></div>
-        </div>
-        <div class="card-main">
-          <div class="card-top">
-            ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
-            <span class="badge member">${v.member}</span>
-          </div>
-          <p class="card-title">${v.show}</p>
-          <p class="card-sub">${v.category}</p>
-          <div class="card-meta">
-            ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : `<span>📅 Check official page for deadline</span>`}
-            ${v.limit ? `<span>🗳️ ${v.limit}</span>` : ''}
-            <span>⚑ ${v.priority.toUpperCase()} priority</span>
-          </div>
-        </div>
-        <div class="card-actions">
-          <div class="vote-row">
-            <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
-            ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="How to vote">📖 Tutorial</button>` : ''}
-          </div>
-          <button class="track-btn ${inCooldown ? 'cooldown' : ''}" data-id="${v.id}" ${inCooldown ? 'disabled' : ''}>
-            ${inCooldown ? `✓ Voted · next in ${fmtDuration(msLeft)}` : 'Mark voted'}
-          </button>
-          ${streak>0 ? `<div class="streak">🔥 ${streak} day streak</div>` : ''}
-        </div>
-      </div>`;
-    }).join("");
+    grid.innerHTML = list.map(v=> state.activeTab === "upcoming" ? renderUpcomingCard(v) : renderActiveCard(v)).join("");
 
     grid.querySelectorAll(".track-btn:not(.cooldown)").forEach(btn=>{
       btn.addEventListener("click", ()=>{
@@ -554,9 +981,10 @@ function render(){
     });
   }
 
-  document.getElementById("statActive").textContent = VOTES.filter(v=> !v.deadline || daysLeft(v.deadline) >= 0).length;
-  document.getElementById("statUrgent").textContent = VOTES.filter(v=> v.deadline && daysLeft(v.deadline) >= 0 && daysLeft(v.deadline) < 2).length;
-  document.getElementById("statDone").textContent = VOTES.filter(v=> cooldownMsLeft(v) === 0).length;
+  document.getElementById("statActive").textContent = activeCount;
+  document.getElementById("statUpcoming").textContent = upcomingCount;
+  document.getElementById("statUrgent").textContent = VOTES.filter(v=> getStatus(v)==="active" && v.deadline && daysLeft(v.deadline) < 2).length;
+  document.getElementById("statDone").textContent = VOTES.filter(v=> getStatus(v)==="active" && cooldownMsLeft(v) === 0).length;
   const bestStreak = Math.max(0, ...Object.values(state.streaks));
   document.getElementById("statStreak").textContent = bestStreak;
 
@@ -566,19 +994,35 @@ function render(){
   notifLabel.textContent = state.notifEnabled ? "Reminders on" : "Enable reminders";
 }
 
+document.querySelectorAll(".tab").forEach(el=>{
+  el.addEventListener("click", ()=>{
+    state.activeTab = el.dataset.tab;
+    render();
+  });
+});
+
 const tutOverlay = document.getElementById("tutOverlay");
 function openTutorial(voteId){
   const v = VOTES.find(x=>x.id===voteId);
-  if(!v || !Array.isArray(v.tutorialSteps)) return;
+  if(!v) return;
   document.getElementById("tutTitle").textContent = `How to vote — ${v.show}`;
   document.getElementById("tutSub").textContent = v.category;
-  document.getElementById("tutSteps").innerHTML = v.tutorialSteps.map((step, i)=>
-    `<li><span class="tut-num">${i+1}</span><span>${step}</span></li>`
-  ).join("");
+  if(Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0){
+    document.getElementById("tutSteps").innerHTML = v.tutorialSteps.map((step, i)=>
+      `<li><span class="tut-num">${i+1}</span><span>${step}</span></li>`
+    ).join("");
+  } else {
+    document.getElementById("tutSteps").innerHTML = `<li><span>No steps yet — this vote hasn't opened, so the exact flow isn't confirmed. Check back once it goes live.</span></li>`;
+  }
   document.getElementById("tutFoot").textContent = v.tutorialNote || "";
   document.getElementById("tutFoot").style.display = v.tutorialNote ? "block" : "none";
-  const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
-  document.getElementById("tutVoteLink").href = v.link ? safeLink : "#";
+  const link = v.link;
+  const hasLink = !!link;
+  const safeLink = hasLink ? ((link || "").startsWith("http") ? link : "https://" + link) : "#";
+  const voteLinkEl = document.getElementById("tutVoteLink");
+  voteLinkEl.href = safeLink;
+  voteLinkEl.textContent = getStatus(v) === "upcoming" ? "Open official info page →" : "Open voting page →";
+  voteLinkEl.style.display = hasLink ? "block" : "none";
   tutOverlay.classList.add("open");
 }
 document.getElementById("tutClose").addEventListener("click", ()=> tutOverlay.classList.remove("open"));
@@ -610,7 +1054,7 @@ document.getElementById("notifBtn").addEventListener("click", async ()=>{
     state.notifEnabled = true;
     saveData();
     render();
-    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon, or a cooldown has ended. Keep this tab open to receive alerts." });
+    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon, a cooldown ends, or an upcoming vote goes live. Keep this tab open to receive alerts." });
     checkAlerts();
   } else {
     alert("Notifications were blocked. You can still track deadlines and cooldowns visually with the countdown rings and buttons.");
@@ -620,13 +1064,14 @@ document.getElementById("notifBtn").addEventListener("click", async ()=>{
 function checkAlerts(){
   if(!state.notifEnabled || Notification.permission !== "granted") return;
   VOTES.forEach(v=>{
-    if(v.deadline){
+    const status = getStatus(v);
+    if(status === "active" && v.deadline){
       const dl = daysLeft(v.deadline);
       if(dl !== null && dl >= 0 && dl < 1){
         new Notification("⏰ Voting closes soon!", { body: `${v.show} — ${v.category} closes in under 24h.` });
       }
     }
-    if(cooldownMsLeft(v) === 0 && state.lastVoted[v.id]){
+    if(status === "active" && cooldownMsLeft(v) === 0 && state.lastVoted[v.id]){
       new Notification("🗳️ Ready to vote again", { body: `${v.show} — ${v.category} is ready for your next vote.` });
     }
   });
