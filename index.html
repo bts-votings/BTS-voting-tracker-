@@ -403,31 +403,6 @@ const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V
      limit         (optional) free-text like "30 votes/day"
    ============================================================ */
 const VOTES = [
-  {
-    id: "tma-2026-summer-fannstar",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "Best Music – Summer (\"SWIM\") — final round",
-    member: "BTS (Group / OT7)",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    deadline: "2026-08-03",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in — you can use an email address or a social account. First-timers will be asked to pick a nickname and finish a quick profile setup.",
-      "From the home screen, find the TMA (The Fact Music Awards) section, usually shown as a banner or listed under the trophy/awards tab.",
-      "Inside TMA, go to the \"Best Music – Summer\" category.",
-      "Search for BTS and tap into their entry.",
-      "Build up your voting currency (called \"stars\") by doing the app's daily tasks — things like watching short ads, checking in, or playing a quick quiz/mini-game.",
-      "On BTS's entry page, tap the vote/star button and enter how many stars you want to spend on that vote.",
-      "Confirm the vote. If a \"video vote\" option is shown, that's a separate way to add votes by watching an ad clip — use it too if you want to maximize votes.",
-      "Repeat daily until the category closes. Stars usually don't roll over once voting ends, so try to spend what you've earned before the deadline."
-    ],
-    tutorialNote: "This trophy round closed Aug 3, 12PM KST — kept here as history, hidden automatically since it has ended. TMA runs Best Music voting quarterly, so a Fall round will open later in the year; add it as a new entry when it does. NOTE: this used to also list Fan N Star Choice – Group and My Star – Male under one deadline, which was wrong — those run on separate schedules, see the new entries below."
-  },
-
   /* ------------------------------------------------------------
      TMA — My Star (Male), 2nd round. Confirmed: all 7 BTS members
      are nominated (Jin, V, J-Hope, Jimin, Jungkook, Suga, RM all
@@ -440,7 +415,9 @@ const VOTES = [
   {
     id: "tma-2026-mystar-jin",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "Jin",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -456,12 +433,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-v",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "V",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -477,12 +456,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-jhope",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "J-Hope",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -498,12 +479,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-jimin",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "Jimin",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -519,12 +502,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-jungkook",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "Jungkook",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -540,12 +525,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-suga",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "Suga",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -561,12 +548,14 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
   {
     id: "tma-2026-mystar-rm",
     show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round voting",
+    category: "My Star – Male — 2nd round",
+    status: "upcoming",
+    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
     member: "RM",
     priority: "high",
     link: "https://en.fannstar.tf.co.kr/tma",
@@ -582,7 +571,7 @@ const VOTES = [
       "Tap vote, enter how many stars to spend, and confirm.",
       "This is the 2nd/final round — repeat daily until the category closes."
     ],
-    tutorialNote: "Closing date for this round hasn't been announced yet — update the `deadline` field here once FANNSTAR confirms it."
+    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
   },
 
   /* ------------------------------------------------------------
@@ -628,10 +617,15 @@ const VOTES = [
      site/STARPOLL app — not an award show, but it is the
      organizer's own official platform, and as of June 2026 the
      results also feed into the AAA 2026 Star Ranking award.
-     It has no fixed end date — it's a rolling weekly poll
-     (Mon 3:01PM KST → next Mon 3:00PM KST), so no `deadline` is
-     set below on purpose; that keeps it always in Active instead
-     of getting auto-hidden as "ended" after each weekly cycle.
+     It has no fixed end date — it's a rolling weekly poll that
+     resets Thursday 3:01PM KST → next Thursday 3:00PM KST (verified
+     from several weeks of reported round dates, all landing on
+     Thursdays — not Monday as an earlier version of this file said).
+     No `deadline` is set below on purpose; that keeps it always in
+     Active instead of getting auto-hidden as "ended" each cycle.
+     `currentRoundNote` below is a manually-set label for the
+     current round's dates — update it each Thursday when the round
+     turns over (or leave it and just trust the `limit` line).
      Only Jimin, Jin, V and Jungkook turned up in recent ranking
      results — add RM/Suga/J-Hope entries too if you confirm
      they're active in this poll.
@@ -650,7 +644,8 @@ const VOTES = [
     link: "https://www.starnewskorea.com/en",
     cooldownHours: 24,
     official: true,
-    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
+    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
     tutorialSteps: [
       "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
       "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
@@ -669,7 +664,8 @@ const VOTES = [
     link: "https://www.starnewskorea.com/en",
     cooldownHours: 24,
     official: true,
-    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
+    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
     tutorialSteps: [
       "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
       "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
@@ -688,7 +684,8 @@ const VOTES = [
     link: "https://www.starnewskorea.com/en",
     cooldownHours: 24,
     official: true,
-    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
+    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
     tutorialSteps: [
       "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
       "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
@@ -707,7 +704,8 @@ const VOTES = [
     link: "https://www.starnewskorea.com/en",
     cooldownHours: 24,
     official: true,
-    limit: "Resets weekly (Mon 3:01PM KST → next Mon 3:00PM KST) — no fixed end date, vote each new round",
+    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
+    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
     tutorialSteps: [
       "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
       "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
@@ -877,7 +875,7 @@ function renderActiveCard(v){
       <p class="card-title">${v.show}</p>
       <p class="card-sub">${v.category}</p>
       <div class="card-meta">
-        ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : `<span>📅 Check official page for deadline</span>`}
+        ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : v.currentRoundNote ? `<span>📅 ${v.currentRoundNote}</span>` : `<span>📅 Check official page for deadline</span>`}
         ${v.limit ? `<span>🗳️ ${v.limit}</span>` : ''}
         <span>⚑ ${v.priority.toUpperCase()} priority</span>
       </div>
