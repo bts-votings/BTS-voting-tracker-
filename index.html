@@ -11,7 +11,7 @@
     --high:#e5484d; --medium:#f5a623; --low:#2f9e44; --success:#2f9e44; --radius:14px;
   }
   [data-theme="dark"]{
-    --bg:#150f1f; --card:#1f1730; --sidebar:#170f24; --text:#f3eefc; --muted:#a595c2; --border:#332748;
+    --bg:#150f1f; --card:#241a38; --sidebar:#170f24; --text:#f3eefc; --muted:#a595c2; --border:#3d2d57;
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);}
@@ -302,25 +302,25 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 const votings = [
   {id:"tma2026", status:"active", award:"The Fact Music Awards (TMA)", nominee:"BTS (Group)", category:"Artist", platform:"Website", priority:"High",
-    officialUrl:"https://tmastar.thefact.co.kr", requirements:"Free account, one vote per round, email verification required.",
+    officialUrl:"https://en.fannstar.tf.co.kr/tma/page/main", requirements:"Free account (login via Facebook, Kakao, LINE, Google, X, or Apple), one vote per round.",
     closesAt: Date.now()+1000*60*60*30, addedAt: Date.now()-1000*60*60*10,
     about:"TMA is one of the biggest fan-voted award shows in K-pop, combining fan votes with music chart performance.",
-    tutorial:{account:"Register with your email on the official TMA voting site and verify via the confirmation link.",
-      currency:"No paid currency needed — one free vote per round per verified account.",
+    tutorial:{account:"On the Fan N Star voting page, log in via Facebook, Kakao, LINE, Google, X/Twitter, or Apple (app only) — no separate signup form needed.",
+      currency:"Vote using free stars, yellow stars, rainbow stars, video votes, and points earned through daily missions.",
       cast:"Select the category, choose BTS, and confirm your vote.",
       limit:"One vote per account per round.",
       rules:"Do not create multiple accounts — duplicates may be flagged and voided.",
       tips:"Vote early in each round since some rounds close without notice."}},
-  {id:"jma2026", status:"active", award:"Japan Music Awards (JMA)", nominee:"BTS (Group)", category:"Song", platform:"Website", priority:"Medium",
-    officialUrl:"https://jma.jp", requirements:"Account login required, one vote per day.",
+  {id:"jma2026", status:"active", award:"Music Awards Japan (MAJ)", nominee:"BTS (Group)", category:"Song", platform:"Website", priority:"Medium",
+    officialUrl:"https://www.musicawardsjapan.com/en/", requirements:"Public vote only for select co-created categories (e.g. Spotify listeners' choice); most MAJ categories are decided by industry voters, not open fan voting.",
     closesAt: Date.now()+1000*60*60*72, addedAt: Date.now()-1000*60*60*2,
-    about:"JMA recognizes top artists and songs across the Japanese and international music market.",
-    tutorial:{account:"Create a free account on the JMA official website with your email.",
-      currency:"No currency — daily free vote resets every 24 hours.",
-      cast:"Navigate to Song category, find BTS's entry, tap vote.",
-      limit:"One vote per day per account.",
-      rules:"VPNs may cause region-lock errors.",
-      tips:"Set a daily reminder so you don't miss a day."}},
+    about:"Music Awards Japan (MAJ) recognizes top artists and songs across the Japanese and international music market. Most categories are voted on by 5,000+ music-industry professionals; only specific co-created categories (like the Spotify Listeners' Choice) are open to public voting.",
+    tutorial:{account:"For public-vote categories, follow the link on the MAJ official site to the partner platform (e.g. Spotify) running that specific vote — no separate MAJ account is needed for those.",
+      currency:"No currency — public categories typically use a simple one-click vote via the partner platform.",
+      cast:"Check the MAJ official site for which categories are currently open to public voting, then vote through the linked partner platform.",
+      limit:"Varies by category — check the specific voting page for limits.",
+      rules:"Most MAJ awards are NOT decided by open fan voting — only clearly marked public/co-creation categories are.",
+      tips:"Double check whether a category is public-vote or industry-vote before assuming your vote counts toward the main award."}},
   {id:"idolchamp", status:"active", award:"Idol Champ", nominee:"Jungkook", category:"Fan Vote", platform:"Android", priority:"High",
     officialUrl:"https://www.idolchamp.com", requirements:"App install, account signup, hearts currency.",
     closesAt: Date.now()+1000*60*45, addedAt: Date.now()-1000*60*5,
