@@ -1,1086 +1,579 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="google-site-verification" content="Qh4Yis0yspsIvOhlV5DXWqXmmbUWATWNdy3OlP95ClM" />
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOTE TRACKER — Official BTS Voting</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>BTS Votings Hub</title>
 <style>
   :root{
-    --bg:#0d0a1a;
-    --bg2:#120c22;
-    --surface:#1a1330;
-    --surface2:#241c3d;
-    --line:#33285a;
-    --purple:#a78bfa;
-    --purple-deep:#7c5cd6;
-    --purple-glow:rgba(167,139,250,.35);
-    --gold:#e8c468;
-    --text:#f4f1fb;
-    --text-dim:#a89bc9;
-    --text-faint:#6f5f96;
-    --urgent:#ff6b8a;
-    --soon:#e8c468;
-    --ok:#6bdcb0;
+    --purple:#8b5cf6; --purple-dark:#6d28d9; --bg:#f7f5fb; --card:#ffffff;
+    --sidebar:#ffffff; --text:#1b1b1f; --muted:#6b6b76; --border:#e4e1ef;
+    --high:#e5484d; --medium:#f5a623; --low:#2f9e44; --success:#2f9e44; --radius:14px;
+  }
+  [data-theme="dark"]{
+    --bg:#150f1f; --card:#1f1730; --sidebar:#170f24; --text:#f3eefc; --muted:#a595c2; --border:#332748;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(ellipse 800px 500px at 15% -10%, rgba(124,92,214,.25), transparent 60%),
-      radial-gradient(ellipse 700px 600px at 110% 10%, rgba(232,196,104,.08), transparent 55%),
-      var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
-  ::selection{background:var(--purple-deep);color:#fff;}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  a{color:inherit;text-decoration:none;}
+  button{cursor:pointer;font-family:inherit;}
+  .app{display:flex;min-height:100vh;}
 
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+  .sidebar{width:230px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .sb-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;}
+  .sb-brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  .sb-brand .name{font-weight:800;font-size:15px;line-height:1.1;}
+  .sb-brand .sub{font-size:10px;color:var(--muted);letter-spacing:.5px;}
+  .sb-group{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:14px 8px 6px;}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--muted);margin-bottom:2px;cursor:pointer;}
+  .sb-item .ic{width:18px;text-align:center;}
+  .sb-item:hover{background:var(--bg);color:var(--text);}
+  .sb-item.active{background:var(--purple);color:#fff;}
+  .sb-footer{font-size:10.5px;color:var(--muted);padding:14px 8px 4px;border-top:1px solid var(--border);margin-top:14px;}
+  .sb-footer b{color:var(--purple);}
 
-  header{
-    display:flex;justify-content:space-between;align-items:flex-start;
-    gap:16px;flex-wrap:wrap;
-    border-bottom:1px solid var(--line);
-    padding-bottom:22px;margin-bottom:26px;
-  }
-  .brand-eyebrow{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--gold);margin:0 0 8px;
-  }
-  h1{
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:700;font-size:clamp(28px,4vw,42px);
-    margin:0;line-height:1.02;letter-spacing:-.01em;
-  }
-  h1 span{color:var(--purple);}
-  .tagline{color:var(--text-dim);font-size:14.5px;margin:8px 0 0;max-width:480px;}
+  .main{flex:1;min-width:0;}
+  .topbar{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--card);position:sticky;top:0;z-index:20;flex-wrap:wrap;}
+  .topbar input[type=text]{flex:1;min-width:180px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13.5px;}
+  .pill{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--purple);background:var(--bg);border:1px solid var(--border);padding:7px 12px;border-radius:20px;white-space:nowrap;}
+  .icon-btn{border:1px solid var(--border);background:var(--bg);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text);position:relative;}
+  .icon-btn .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--high);}
+  select.lang{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12.5px;}
+  .avatar-btn{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 5px;font-size:13px;font-weight:700;}
+  .avatar-circle{width:26px;height:26px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
 
-  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
-  .creator-badge{
-    font-family:'JetBrains Mono',monospace;
-    font-size:12px;color:var(--bg);
-    background:linear-gradient(120deg,var(--gold),#f3dd9a);
-    padding:7px 12px;border-radius:20px;font-weight:600;
-    white-space:nowrap;box-shadow:0 2px 12px rgba(232,196,104,.25);
-  }
-  .notif-btn{
-    display:flex;align-items:center;gap:7px;
-    background:var(--surface);border:1px solid var(--line);
-    color:var(--text);padding:9px 14px;border-radius:20px;
-    font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;
-    transition:.15s;
-  }
-  .notif-btn:hover{border-color:var(--purple);}
-  .notif-btn.on{border-color:var(--ok);color:var(--ok);}
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);}
-  .notif-btn.on .dot{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+  .content{padding:20px;max-width:1300px;margin:0 auto;}
 
-  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
-  .stat{
-    background:var(--surface);border:1px solid var(--line);
-    border-radius:14px;padding:14px 18px;flex:1;min-width:130px;
-  }
-  .stat .n{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;}
-  .stat .l{font-size:11.5px;color:var(--text-dim);letter-spacing:.03em;margin-top:2px;}
-  .stat.urgent .n{color:var(--urgent);}
-  .stat.ok .n{color:var(--ok);}
-  .stat.upcoming .n{color:var(--gold);}
+  .hero{background:linear-gradient(135deg, rgba(139,92,246,.18), rgba(20,17,28,.4));border:1px solid var(--border);border-radius:18px;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px;}
+  [data-theme="light"] .hero{background:linear-gradient(135deg, #efe9ff, #f7f5fb);}
+  .hero-left{max-width:560px;}
+  .hero-label{font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--purple);text-transform:uppercase;margin-bottom:8px;}
+  .hero h1{font-size:32px;margin:0 0 10px;font-weight:900;letter-spacing:-.5px;}
+  .hero p{color:var(--muted);font-size:14px;margin:0 0 18px;}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:700;border:1px solid var(--border);background:var(--card);color:var(--text);}
+  .btn-primary{background:var(--purple);border:none;color:#fff;}
+  .btn-primary:hover{background:var(--purple-dark);}
+  .countdown-blocks{display:flex;gap:8px;}
+  .cblock{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:56px;}
+  .cblock .num{font-size:22px;font-weight:900;color:var(--purple);}
+  .cblock .lbl{font-size:9.5px;color:var(--muted);letter-spacing:1px;}
 
-  /* ---- Tabs (Active / Upcoming) ---- */
-  .tabbar{display:flex;gap:8px;margin-bottom:18px;border-bottom:1px solid var(--line);}
-  .tab{
-    padding:10px 4px;margin-bottom:-1px;
-    border-bottom:2px solid transparent;
-    color:var(--text-dim);font-size:14px;font-weight:600;cursor:pointer;
-    display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;
-    padding-left:6px;padding-right:6px;
-  }
-  .tab .count{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    background:var(--surface2);color:var(--text-dim);
-    padding:1px 7px;border-radius:10px;
-  }
-  .tab.active{color:var(--text);border-bottom-color:var(--purple);}
-  .tab.active .count{background:var(--purple-deep);color:#fff;}
+  .sec-label{font-size:11px;font-weight:800;letter-spacing:1.2px;color:var(--purple);text-transform:uppercase;margin-bottom:2px;}
+  .sec-title{font-size:20px;font-weight:900;margin:0 0 14px;}
+  .sec-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin:26px 0 12px;}
 
-  .controls{
-    display:flex;gap:12px;flex-wrap:wrap;align-items:center;
-    margin-bottom:18px;
-  }
-  .search-box{
-    flex:1;min-width:200px;
-    background:var(--surface);border:1px solid var(--line);
-    border-radius:12px;padding:10px 14px;
-    display:flex;align-items:center;gap:8px;
-  }
-  .search-box input{
-    background:none;border:none;outline:none;color:var(--text);
-    font-size:14px;width:100%;font-family:'Inter',sans-serif;
-  }
-  .search-box input::placeholder{color:var(--text-faint);}
-  select{
-    background:var(--surface);border:1px solid var(--line);color:var(--text);
-    padding:10px 12px;border-radius:12px;font-size:13.5px;font-family:'Inter',sans-serif;
-    cursor:pointer;outline:none;
-  }
+  .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;}
+  .quick-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;}
+  .quick-card .qic{font-size:20px;margin-bottom:10px;}
+  .quick-card .qtitle{font-weight:800;font-size:14.5px;margin-bottom:6px;}
+  .quick-card .qopen{font-size:12px;color:var(--purple);font-weight:700;}
 
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
-  .chip{
-    padding:6px 13px;border-radius:20px;font-size:12.5px;
-    border:1px solid var(--line);color:var(--text-dim);cursor:pointer;
-    background:var(--surface);transition:.15s;font-family:'Inter',sans-serif;
-  }
-  .chip:hover{border-color:var(--purple);color:var(--text);}
-  .chip.active{background:var(--purple-deep);border-color:var(--purple-deep);color:#fff;}
+  .widget-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;}
+  @media(max-width:900px){.widget-grid{grid-template-columns:1fr;}}
+  .widget{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+  .widget h3{margin:0 0 12px;font-size:14.5px;font-weight:800;}
+  .today-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+  .today-row .t-main{font-size:13.5px;font-weight:700;}
+  .today-row .t-sub{font-size:11.5px;color:var(--muted);}
+  .today-row .t-time{font-size:12.5px;font-weight:800;color:var(--purple);}
+  .cal-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:9px 0;font-size:13px;}
+  .cal-row:last-child{border-bottom:none;}
+  .notif-row{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .notif-row:last-child{border-bottom:none;}
 
-  .verify-notice{
-    display:flex;gap:10px;align-items:flex-start;
-    background:linear-gradient(120deg,rgba(107,220,176,.08),rgba(167,139,250,.06));
-    border:1px solid rgba(107,220,176,.25);
-    border-radius:12px;padding:12px 16px;margin-bottom:24px;
-    font-size:13px;color:var(--text-dim);line-height:1.5;
-  }
-  .verify-notice b{color:var(--ok);}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .controls select{padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .badges{display:flex;flex-wrap:wrap;gap:6px;}
+  .badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;}
+  .badge-official{background:#e7f6ec;color:var(--success);}
+  [data-theme="dark"] .badge-official{background:#153a22;color:#7be495;}
+  .badge-priority-high{background:#fdeceb;color:var(--high);}
+  .badge-priority-medium{background:#fff4e0;color:var(--medium);}
+  .badge-priority-low{background:#e9f7ec;color:var(--low);}
+  [data-theme="dark"] .badge-priority-high{background:#3a1518;color:#ff8b8e;}
+  [data-theme="dark"] .badge-priority-medium{background:#3a2a0a;color:#ffcb70;}
+  [data-theme="dark"] .badge-priority-low{background:#123420;color:#7be495;}
+  .badge-new{background:var(--purple);color:#fff;}
+  .badge-closing{background:var(--high);color:#fff;}
+  .card h4{margin:0;font-size:15.5px;}
+  .meta{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;}
+  .meta b{color:var(--text);}
+  .countdown{font-weight:800;font-size:13.5px;color:var(--purple);}
+  .card-actions{display:flex;gap:8px;margin-top:auto;}
+  .card-actions button,.card-actions a{flex:1;text-align:center;padding:9px;border-radius:10px;font-size:12.5px;font-weight:700;border:none;}
+  .vote-now{background:var(--purple);color:#fff;}
+  .tutorial-btn{background:var(--bg);border:1px solid var(--border) !important;color:var(--text);}
+  .empty{color:var(--muted);font-size:13px;padding:30px;text-align:center;border:1px dashed var(--border);border-radius:var(--radius);}
 
-  .grid{display:flex;flex-direction:column;gap:12px;}
-  .card{
-    background:var(--surface);border:1px solid var(--line);
-    border-radius:16px;padding:18px 20px;
-    display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;
-    transition:.15s;position:relative;overflow:hidden;
-  }
-  .card:hover{border-color:var(--purple);}
-  .card.priority-high{border-left:3px solid var(--urgent);}
-  .card.priority-medium{border-left:3px solid var(--soon);}
-  .card.priority-low{border-left:3px solid var(--ok);}
-  .card.is-upcoming{border-left:3px solid var(--gold);}
+  .info-page{max-width:750px;line-height:1.7;font-size:14px;}
+  .faq-item{border-bottom:1px solid var(--border);padding:12px 0;}
+  .faq-item b{display:block;margin-bottom:3px;}
 
-  .ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
-  .ring-wrap svg{transform:rotate(-90deg);}
-  .ring-bg{fill:none;stroke:var(--surface2);stroke-width:5;}
-  .ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s;}
-  .ring-label{
-    position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
-  }
-  .ring-label .d{font-size:15px;font-weight:600;line-height:1;}
-  .ring-label .u{font-size:8px;color:var(--text-faint);letter-spacing:.05em;}
+  footer{text-align:center;padding:26px 20px 40px;color:var(--muted);font-size:12px;}
+  footer .credit{font-weight:800;color:var(--text);margin-bottom:4px;font-size:14px;}
 
-  .upcoming-badge-wrap{
-    width:64px;height:64px;flex-shrink:0;border-radius:50%;
-    background:rgba(232,196,104,.1);border:1px solid rgba(232,196,104,.3);
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;
-  }
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
+  .modal{background:var(--card);border-radius:16px;padding:24px;max-width:380px;width:100%;position:relative;border:1px solid var(--border);}
+  .modal.wide{max-width:520px;max-height:85vh;overflow-y:auto;}
+  .modal h2{margin:0 0 4px;font-size:19px;}
+  .modal p.sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .modal input{width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;}
+  .modal .close-x{position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;color:var(--muted);}
+  .modal .skip{width:100%;text-align:center;margin-top:8px;background:none;border:none;color:var(--muted);font-size:13px;text-decoration:underline;}
+  .tutorial-body h4{margin:14px 0 4px;font-size:13.5px;}
 
-  .card-main{min-width:0;}
-  .card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
-  .badge{
-    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;
-    padding:2px 8px;border-radius:6px;text-transform:uppercase;font-weight:600;
-  }
-  .badge.official{background:rgba(107,220,176,.15);color:var(--ok);border:1px solid rgba(107,220,176,.3);}
-  .badge.member{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
-  .badge.upcoming{background:rgba(232,196,104,.15);color:var(--gold);border:1px solid rgba(232,196,104,.3);}
-  .card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16.5px;margin:0;}
-  .card-sub{font-size:13px;color:var(--text-dim);margin:3px 0 0;}
-  .card-meta{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
-  .card-meta span{display:flex;align-items:center;gap:5px;}
-
-  .card-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;}
-  .vote-row{display:flex;gap:8px;align-items:stretch;}
-  .vote-btn{
-    background:linear-gradient(120deg,var(--purple-deep),var(--purple));
-    color:#fff;border:none;padding:10px 20px;border-radius:10px;
-    font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;
-    text-align:center;white-space:nowrap;font-family:'Inter',sans-serif;
-    box-shadow:0 4px 16px rgba(124,92,214,.3);transition:.15s;
-    display:flex;align-items:center;justify-content:center;flex:1;
-  }
-  .vote-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,214,.45);}
-  .vote-btn.info-link{
-    background:var(--surface2);color:var(--gold);
-    box-shadow:none;border:1px solid var(--line);
-  }
-  .vote-btn.info-link:hover{border-color:var(--gold);transform:none;}
-  .tut-btn{
-    background:var(--surface2);border:1px solid var(--line);color:var(--gold);
-    padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    white-space:nowrap;font-family:'Inter',sans-serif;transition:.15s;
-  }
-  .tut-btn:hover{border-color:var(--gold);}
-  .track-btn{
-    background:none;border:1px solid var(--line);color:var(--text-dim);
-    padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer;
-    font-family:'Inter',sans-serif;white-space:nowrap;transition:.15s;width:100%;
-  }
-  .track-btn.done{border-color:var(--ok);color:var(--ok);background:rgba(107,220,176,.08);cursor:default;}
-  .track-btn.cooldown{border-color:var(--line);color:var(--text-faint);cursor:default;}
-  .streak{font-size:10.5px;color:var(--text-faint);text-align:center;font-family:'JetBrains Mono',monospace;}
-
-  .empty{
-    text-align:center;padding:60px 20px;color:var(--text-faint);
-  }
-  .empty .big{font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--text-dim);margin-bottom:6px;}
-
-  .overlay{
-    position:fixed;inset:0;background:rgba(6,4,14,.75);
-    display:none;align-items:center;justify-content:center;z-index:50;
-    padding:20px;backdrop-filter:blur(3px);
-  }
-  .overlay.open{display:flex;}
-  .modal{
-    background:var(--surface);border:1px solid var(--line);border-radius:18px;
-    padding:26px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;
-  }
-  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px;}
-  .modal h3{font-family:'Space Grotesk',sans-serif;margin:0;font-size:19px;}
-  .modal .sub{font-size:12.5px;color:var(--text-dim);margin:4px 0 18px;}
-  .modal-close{
-    background:none;border:1px solid var(--line);color:var(--text-dim);
-    width:28px;height:28px;border-radius:8px;cursor:pointer;flex-shrink:0;
-    font-size:14px;line-height:1;
-  }
-  .modal-close:hover{border-color:var(--purple);color:var(--text);}
-  .tut-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
-  .tut-steps li{
-    display:flex;gap:12px;align-items:flex-start;
-    font-size:13.5px;line-height:1.5;color:var(--text);
-  }
-  .tut-num{
-    flex-shrink:0;width:24px;height:24px;border-radius:7px;
-    background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);
-    color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .tut-foot{
-    margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
-    font-size:11.5px;color:var(--text-faint);line-height:1.5;
-  }
-  .modal-vote-link{
-    display:block;text-align:center;margin-top:16px;
-    background:linear-gradient(120deg,var(--purple-deep),var(--purple));
-    color:#fff;padding:11px;border-radius:10px;font-weight:600;font-size:13.5px;
-    text-decoration:none;
-  }
-
-  footer{
-    margin-top:50px;padding-top:24px;border-top:1px solid var(--line);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
-  }
-  .footer-credit{
-    font-family:'JetBrains Mono',monospace;font-size:13px;
-    color:var(--gold);letter-spacing:.02em;
-  }
-  .footer-note{font-size:11.5px;color:var(--text-faint);max-width:440px;line-height:1.5;}
-
-  @media (max-width:640px){
-    .card{grid-template-columns:auto 1fr;}
-    .card-actions{grid-column:1 / -1;margin-top:6px;}
-    .ring-wrap,.upcoming-badge-wrap{width:52px;height:52px;}
-  }
+  .credit-tag{position:fixed;bottom:12px;right:14px;background:var(--card);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:11px;color:var(--muted);z-index:150;}
+  .credit-tag b{color:var(--purple);}
+  @media(max-width:800px){.sidebar{display:none;}}
 </style>
 </head>
-<body>
-<div class="wrap">
+<body data-theme="dark">
 
-  <header>
-    <div>
-      <p class="brand-eyebrow">〈 vote pulse 〉</p>
-      <h1>Stream & <span>Vote</span> Tracker</h1>
-      <p class="tagline">Every active <b style="color:var(--text)">official</b> BTS &amp; member vote in one place — with direct links, built-in tutorials and daily reminders. Ended votes disappear automatically; upcoming ones get their own tab.</p>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="logo">B</div>
+      <div><div class="name">BTS Votings</div><div class="sub">VOTING &amp; STREAMING HUB</div></div>
     </div>
-    <div class="header-right">
-      <div class="creator-badge">created by @bts_votings on yt</div>
-      <button class="notif-btn" id="notifBtn"><span class="dot"></span><span id="notifLabel">Enable reminders</span></button>
+
+    <div class="sb-group">Discover</div>
+    <div class="sb-item active" data-tab="home" onclick="showTab('home')"><span class="ic">🏠</span>Home</div>
+    <div class="sb-item" data-tab="active" onclick="showTab('active')"><span class="ic">🔥</span>Active votings</div>
+    <div class="sb-item" data-tab="upcoming" onclick="showTab('upcoming')"><span class="ic">⏳</span>Upcoming votings</div>
+    <div class="sb-item" data-tab="ended" onclick="showTab('ended')"><span class="ic">📦</span>Ended votings</div>
+    <div class="sb-item" data-tab="calendar" onclick="showTab('calendar')"><span class="ic">📅</span>Award calendar</div>
+
+    <div class="sb-group">Info</div>
+    <div class="sb-item" data-tab="news" onclick="showTab('news')"><span class="ic">📰</span>News</div>
+    <div class="sb-item" data-tab="howvoting" onclick="showTab('howvoting')"><span class="ic">❓</span>How voting works</div>
+    <div class="sb-item" data-tab="faq" onclick="showTab('faq')"><span class="ic">💬</span>FAQ</div>
+    <div class="sb-item" data-tab="notifications" onclick="showTab('notifications')"><span class="ic">🔔</span>Alerts</div>
+
+    <div class="sb-footer">created by <b>@bts_votings</b> on YT</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <input type="text" id="searchInput" placeholder="Search award, member, or voting..." oninput="renderVotings()">
+      <div class="pill" id="topCountdown">⏱ --</div>
+      <select id="langSelect" class="lang" onchange="setLang(this.value)">
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+        <option value="ko">KO</option>
+        <option value="pt">PT</option>
+        <option value="id">ID</option>
+      </select>
+      <button class="icon-btn" onclick="showTab('notifications')">🔔<span class="dot"></span></button>
+      <button class="icon-btn" id="darkToggle" onclick="toggleDark()">☀️</button>
+      <button class="avatar-btn" id="accountBtn" onclick="openAuthModal()"><span class="avatar-circle">G</span>Guest</button>
     </div>
-  </header>
 
-  <div class="stats">
-    <div class="stat"><div class="n" id="statActive">–</div><div class="l">ACTIVE VOTES</div></div>
-    <div class="stat urgent"><div class="n" id="statUrgent">–</div><div class="l">ENDING &lt; 48H</div></div>
-    <div class="stat upcoming"><div class="n" id="statUpcoming">–</div><div class="l">UPCOMING</div></div>
-    <div class="stat ok"><div class="n" id="statDone">–</div><div class="l">READY TO VOTE</div></div>
-    <div class="stat"><div class="n" id="statStreak">–</div><div class="l">BEST STREAK</div></div>
-  </div>
+    <div class="content">
 
-  <div class="verify-notice">
-    <span>💜</span>
-    <div><b>Official sources only.</b> This tracker only lists votes cast on an award show's own site/app or an artist's verified account. Always double-check the link matches the organizer's official domain or app before voting — never enter your password on a page you don't recognize.</div>
-  </div>
+      <div id="page-home">
+        <div class="hero">
+          <div class="hero-left">
+            <div class="hero-label">Today's top priority</div>
+            <h1 id="heroTitle">Loading…</h1>
+            <p id="heroSub"></p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="heroVoteBtn">Vote now</button>
+              <button class="btn" onclick="showTab('active')">View all active votings</button>
+            </div>
+          </div>
+          <div class="countdown-blocks" id="heroCountdown"></div>
+        </div>
 
-  <div class="tabbar">
-    <div class="tab" data-tab="active">🟢 Active <span class="count" id="countActive">0</span></div>
-    <div class="tab" data-tab="upcoming">🔜 Upcoming <span class="count" id="countUpcoming">0</span></div>
-  </div>
+        <div class="sec-head-row"><div class="sec-title" style="margin:0;">Quick access</div></div>
+        <div class="quick-grid">
+          <div class="quick-card" onclick="showTab('active')"><div class="qic">🔥</div><div class="qtitle">Active votings</div><div class="qopen">Open ›</div></div>
+          <div class="quick-card" onclick="showTab('calendar')"><div class="qic">📅</div><div class="qtitle">Award calendar</div><div class="qopen">Open ›</div></div>
+          <div class="quick-card" onclick="showTab('howvoting')"><div class="qic">❓</div><div class="qtitle">How voting works</div><div class="qopen">Open ›</div></div>
+          <div class="quick-card" onclick="showTab('news')"><div class="qic">📰</div><div class="qtitle">News</div><div class="qopen">Open ›</div></div>
+        </div>
 
-  <div class="controls">
-    <div class="search-box">
-      <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="Search award show, category, member…">
-    </div>
-    <select id="sortSelect">
-      <option value="deadline">Sort: Deadline (soonest)</option>
-      <option value="priority">Sort: Priority</option>
-    </select>
-  </div>
+        <div class="widget-grid" style="margin-top:24px;">
+          <div class="widget"><h3>⭐ Today's priority votings</h3><div id="todayList"></div></div>
+          <div class="widget"><h3>📅 This month's calendar</h3><div id="homeCalendar"></div></div>
+        </div>
 
-  <div class="chips" id="memberChips"></div>
-
-  <div class="grid" id="cardGrid"></div>
-
-</div>
-
-<div class="overlay" id="tutOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h3 id="tutTitle">How to vote</h3>
-        <p class="sub" id="tutSub"></p>
+        <div class="widget-grid" style="margin-top:14px;">
+          <div class="widget"><h3>🔔 Latest alerts</h3><div id="homeNotif"></div></div>
+          <div class="widget"><h3>📰 Latest news</h3><div id="homeNews"></div></div>
+        </div>
       </div>
-      <button class="modal-close" id="tutClose">✕</button>
+
+      <div id="page-votings" style="display:none;">
+        <div class="sec-label" id="sectionLabel">Votings</div>
+        <div class="sec-title" id="sectionTitle">Active official votings</div>
+        <div class="controls">
+          <select id="filterMember" onchange="renderVotings()">
+            <option value="">All members</option>
+            <option value="BTS (Group)">BTS (Group)</option>
+            <option value="RM">RM</option><option value="Jin">Jin</option><option value="Suga">Suga</option>
+            <option value="J-Hope">J-Hope</option><option value="Jimin">Jimin</option><option value="V">V</option>
+            <option value="Jungkook">Jungkook</option>
+          </select>
+          <select id="filterAward" onchange="renderVotings()"><option value="">All award shows</option></select>
+          <select id="filterPlatform" onchange="renderVotings()">
+            <option value="">All platforms</option><option value="Website">Website</option>
+            <option value="Android">Android app</option><option value="iOS">iOS app</option><option value="Multi">Multiple platforms</option>
+          </select>
+          <select id="filterCategory" onchange="renderVotings()">
+            <option value="">All categories</option><option value="Artist">Artist</option><option value="Song">Song</option>
+            <option value="Album">Album</option><option value="Music Video">Music Video</option><option value="Fan Vote">Fan Vote</option>
+          </select>
+        </div>
+        <div class="grid" id="votingGrid"></div>
+      </div>
+
+      <div id="page-calendar" class="info-page" style="display:none;">
+        <div class="sec-label">Info</div><div class="sec-title">Award calendar</div>
+        <p style="color:var(--muted);">Yearly timeline of major BTS-related official voting events.</p>
+        <div class="widget" id="calendarList"></div>
+      </div>
+
+      <div id="page-news" class="info-page" style="display:none;">
+        <div class="sec-label">Info</div><div class="sec-title">News</div>
+        <div id="newsList"></div>
+      </div>
+
+      <div id="page-howvoting" class="info-page" style="display:none;">
+        <div class="sec-label">Info</div><div class="sec-title">How voting works</div>
+        <p><b>Ticket/heart/star systems:</b> Many apps give a limited number of free votes per day (hearts or stars) that reset at a fixed time. Some allow bonus votes through ads, missions, or purchases.</p>
+        <p><b>Ranking charts:</b> Platforms like Fandom Chart or Fan N Star combine streaming, social, and voting data into one score — voting is only part of the ranking.</p>
+        <p><b>Account-based voting:</b> Most official apps require an account so each person's votes are counted fairly and to prevent bots.</p>
+        <p><b>One-time vs daily voting:</b> Some award shows only allow one vote per round, while apps like Idol Champ or Mubeat allow daily voting until the period ends.</p>
+      </div>
+
+      <div id="page-faq" class="info-page" style="display:none;">
+        <div class="sec-label">Info</div><div class="sec-title">FAQ</div>
+        <div class="faq-item"><b>Do I need a real phone number?</b>Some apps require a local phone number or Google/Apple sign-in — noted per voting's tutorial.</div>
+        <div class="faq-item"><b>What are voting currencies?</b>Hearts, stars, tickets, or points refer to how many votes you can submit.</div>
+        <div class="faq-item"><b>Why didn't my vote count?</b>Common causes: VPN use, an unverified account, or voting after the daily reset window closed.</div>
+        <div class="faq-item"><b>Is this an official voting platform?</b>No — this site only tracks and links to official voting pages/apps.</div>
+      </div>
+
+      <div id="page-notifications" class="info-page" style="display:none;">
+        <div class="sec-label">Info</div><div class="sec-title">Alerts and updates</div>
+        <div class="widget" id="notifList"></div>
+      </div>
+
     </div>
-    <ol class="tut-steps" id="tutSteps"></ol>
-    <div class="tut-foot" id="tutFoot"></div>
-    <a class="modal-vote-link" id="tutVoteLink" href="#" target="_blank" rel="noopener noreferrer">Open voting page →</a>
+
+    <footer>
+      <div class="credit">Created by @bts_votings on YT</div>
+      <div>Unofficial fan-run tracker. Not affiliated with BTS, HYBE, or any award show. All votes link to official sources only.</div>
+      <div style="margin-top:6px;">© <span id="year"></span> BTS Votings Hub</div>
+    </footer>
   </div>
 </div>
 
-<footer>
-  <div class="footer-credit">💜 created by @bts_votings on yt</div>
-  <div class="footer-note">MVP build — your vote-tracking data (last voted, streaks, reminders) is saved to your account only and stays put across visits. The list of votes, statuses and tutorial steps is maintained in the code (see the <code>VOTES</code> array) — update it directly when a new official BTS vote opens, moves to upcoming, or closes.</div>
-</footer>
+<div class="credit-tag">🎥 created by <b>@bts_votings</b> on YT</div>
+
+<div class="modal-overlay" id="authOverlay" style="display:none;">
+  <div class="modal">
+    <button class="close-x" onclick="closeAuthModal()">✕</button>
+    <h2>Welcome, ARMY! 💜</h2>
+    <p class="sub">Sign in to save your account and get personalized voting reminders.<br><small>created by @bts_votings on YT</small></p>
+    <input type="text" id="authName" placeholder="Your display name">
+    <input type="email" id="authEmail" placeholder="Email address">
+    <button class="btn btn-primary" style="width:100%;" onclick="doSignIn()">Sign in / Create account</button>
+    <button class="skip" onclick="closeAuthModal()">Continue without signing in</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tutorialOverlay" style="display:none;">
+  <div class="modal wide">
+    <button class="close-x" onclick="closeTutorial()">✕</button>
+    <h2 id="tutTitle"></h2>
+    <p class="sub" id="tutSub"></p>
+    <div class="tutorial-body" id="tutBody"></div>
+  </div>
+</div>
 
 <script>
-const MEMBERS = ["All","BTS (Group / OT7)","RM","Jin","Suga","J-Hope","Jimin","V","Jungkook"];
+console.log("%cBTS Votings Hub — created by @bts_votings on YT","color:#8b5cf6;font-size:14px;font-weight:bold;");
+document.getElementById('year').textContent = new Date().getFullYear();
 
-/* ============================================================
-   OFFICIAL VOTE LIST — edit this array directly to add, update,
-   or remove votes. Only put votes hosted on an award show's or
-   artist's own official platform here (site, official app,
-   verified account) — never a reposted/unofficial link.
-
-   STATUS MODEL (new):
-     Each vote is shown as "active" or "upcoming" automatically.
-     - If `deadline` has passed, the vote is ALWAYS treated as
-       ended and is hidden from both tabs — no manual cleanup
-       needed. It stays in this array (so your streak/history
-       data for it still resolves), it just won't render.
-     - If `status: "upcoming"` is set, it shows in the Upcoming
-       tab instead of Active — use this for shows that are
-       confirmed but haven't opened voting yet (no live link).
-     - Otherwise (no deadline passed, no upcoming flag) it shows
-       as Active.
-
-   Fields:
-     id            unique string, never reuse/change once added
-                    (it's the key your voted/streak history is
-                    stored under)
-     show          award show / campaign name
-     category      what you're voting for (use "TBA" if not
-                    announced yet)
-     member        must be one of the MEMBERS list above
-     priority      "high" | "medium" | "low"
-     status        omit for active, or set "upcoming"
-     link          official voting URL (active) — omit or use an
-                    official INFO page for upcoming shows, since
-                    there's no vote page live yet
-     ceremonyDate  "YYYY-MM-DD" — used for the Upcoming card
-     opensNote     free text like "Voting opens ~ Oct 2026" for
-                    upcoming shows without a confirmed date
-     tutorialSteps array of plain-text steps for the in-app
-                    tutorial popup — leave empty ([]) for
-                    upcoming shows until the real flow is known
-     tutorialNote  (optional) small print shown under the steps
-     deadline      "YYYY-MM-DD" or "" if no fixed date yet
-     cooldownHours how many hours after marking "voted" before
-                    this vote is shown as available again
-     limit         (optional) free-text like "30 votes/day"
-   ============================================================ */
-const VOTES = [
-  /* ------------------------------------------------------------
-     TMA — My Star (Male), 2nd round. Confirmed: all 7 BTS members
-     are nominated (Jin, V, J-Hope, Jimin, Jungkook, Suga, RM all
-     appeared in the prelim rankings). Prelim ran Jul 20–Aug 3;
-     the 2nd/final round opened Aug 3 per FANNSTAR's own voting
-     guide. No confirmed closing date yet for this round — leave
-     `deadline` blank until The Fact announces it, then add it so
-     auto-hide kicks in.
-  ------------------------------------------------------------ */
-  {
-    id: "tma-2026-mystar-jin",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "Jin",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for Jin and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-v",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "V",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for V and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-jhope",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "J-Hope",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for J-Hope and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-jimin",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "Jimin",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for Jimin and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-jungkook",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "Jungkook",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for Jungkook and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-suga",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "Suga",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for Suga and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-  {
-    id: "tma-2026-mystar-rm",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "My Star – Male — 2nd round",
-    status: "upcoming",
-    opensNote: "Round 1 (preliminary) has ended. Round 2 hasn't opened yet — starting soon. This will move back to Active and get a live vote link once it's confirmed open.",
-    member: "RM",
-    priority: "high",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    limit: "Earn stars via FAN N STAR app tasks, then vote with stars + video vote",
-    official: true,
-    tutorialSteps: [
-      "Install the FAN N STAR app from the App Store or Google Play, or open it if it's already on your phone.",
-      "Sign up or log in with an email, Facebook, Kakao, LINE, Google, X, or Apple account.",
-      "Go to the TMA section, then find the \"My Star (Male)\" category.",
-      "Search for RM and tap into his entry.",
-      "Earn stars through the app's daily missions (free stars, plus yellow/rainbow stars and video voting).",
-      "Tap vote, enter how many stars to spend, and confirm.",
-      "This is the 2nd/final round — repeat daily until the category closes."
-    ],
-    tutorialNote: "Preview only — round 2 hasn't opened yet, so these steps are based on how round 1 worked. Once round 2 goes live, confirm the flow still matches, add the real link/deadline, and flip status back to active."
-  },
-
-  /* ------------------------------------------------------------
-     TMA — FANNSTAR Choice (Group). 1st round ran Jul 20–Aug 3;
-     BTS placed 1st in that round. 2nd round is confirmed to open
-     Aug 18 — marking as upcoming until then.
-  ------------------------------------------------------------ */
-  {
-    id: "tma-2026-choice-group",
-    show: "2026 The Fact Music Awards (TMA)",
-    category: "FANNSTAR Choice Award — Group (2nd round)",
-    member: "BTS (Group / OT7)",
-    priority: "medium",
-    status: "upcoming",
-    opensNote: "1st round closed Aug 3 with BTS in 1st place. 2nd round voting opens Aug 18 — no live link yet.",
-    link: "https://en.fannstar.tf.co.kr/tma",
-    cooldownHours: 24,
-    official: true,
-    tutorialSteps: [],
-    tutorialNote: "Flip this entry's status to active and add tutorialSteps once the Aug 18 round is confirmed open."
-  },
-  {
-    id: "mma-2026-melon",
-    show: "2026 Melon Music Awards (MMA)",
-    category: "TBA — categories not yet announced",
-    member: "BTS (Group / OT7)",
-    priority: "medium",
-    status: "upcoming",
-    ceremonyDate: "2026-11-14",
-    opensNote: "Ceremony confirmed for Nov 14–15, 2026 at Gocheok Sky Dome, Seoul. Pre-event TOP10 and category voting typically opens a few weeks before the show — no live vote link yet.",
-    link: "https://www.melon.com/mma/info.htm",
-    cooldownHours: 24,
-    official: true,
-    tutorialSteps: [],
-    tutorialNote: "Voting hasn't opened, so there's no confirmed step-by-step yet. In past years MMA voting has run through the Melon app/site (Top 10, category, and Global-K Chart-linked awards) — once this year's flow is confirmed, add the real steps here and flip this entry's status to active."
-  },
-
-  /* ------------------------------------------------------------
-     SOLO MEMBER VOTING — STARNEWS Star Ranking (Star Idol Male)
-     This is the one currently-live, verifiable recurring poll
-     where individual members (not the group) are voted for by
-     name. It's run by the Korean outlet STARNEWS through its own
-     site/STARPOLL app — not an award show, but it is the
-     organizer's own official platform, and as of June 2026 the
-     results also feed into the AAA 2026 Star Ranking award.
-     It has no fixed end date — it's a rolling weekly poll that
-     resets Thursday 3:01PM KST → next Thursday 3:00PM KST (verified
-     from several weeks of reported round dates, all landing on
-     Thursdays — not Monday as an earlier version of this file said).
-     No `deadline` is set below on purpose; that keeps it always in
-     Active instead of getting auto-hidden as "ended" each cycle.
-     `currentRoundNote` below is a manually-set label for the
-     current round's dates — update it each Thursday when the round
-     turns over (or leave it and just trust the `limit` line).
-     Only Jimin, Jin, V and Jungkook turned up in recent ranking
-     results — add RM/Suga/J-Hope entries too if you confirm
-     they're active in this poll.
-     NOT added: the "voteforpjm" style carrd.co fan pages that
-     tell people to install an unofficial APK and register
-     multiple accounts. That breaks INKIGAYO's own voting terms
-     and this tracker's "official sources only" rule — worth
-     steering fans away from, not toward.
-  ------------------------------------------------------------ */
-  {
-    id: "starranking-2026-jimin",
-    show: "STARNEWS Star Ranking — Star Idol (Male)",
-    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
-    member: "Jimin",
-    priority: "medium",
-    link: "https://www.starnewskorea.com/en",
-    cooldownHours: 24,
-    official: true,
-    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
-    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
-    tutorialSteps: [
-      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
-      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
-      "Search for Jimin and open his profile.",
-      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
-      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
-    ],
-    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
-  },
-  {
-    id: "starranking-2026-jin",
-    show: "STARNEWS Star Ranking — Star Idol (Male)",
-    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
-    member: "Jin",
-    priority: "medium",
-    link: "https://www.starnewskorea.com/en",
-    cooldownHours: 24,
-    official: true,
-    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
-    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
-    tutorialSteps: [
-      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
-      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
-      "Search for Jin and open his profile.",
-      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
-      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
-    ],
-    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
-  },
-  {
-    id: "starranking-2026-v",
-    show: "STARNEWS Star Ranking — Star Idol (Male)",
-    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
-    member: "V",
-    priority: "medium",
-    link: "https://www.starnewskorea.com/en",
-    cooldownHours: 24,
-    official: true,
-    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
-    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
-    tutorialSteps: [
-      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
-      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
-      "Search for V and open his profile.",
-      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
-      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
-    ],
-    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
-  },
-  {
-    id: "starranking-2026-jungkook",
-    show: "STARNEWS Star Ranking — Star Idol (Male)",
-    category: "Weekly popularity poll · results now count toward the AAA 2026 Star Ranking award",
-    member: "Jungkook",
-    priority: "medium",
-    link: "https://www.starnewskorea.com/en",
-    cooldownHours: 24,
-    official: true,
-    limit: "Resets weekly, Thu 3:01PM KST → next Thu 3:00PM KST",
-    currentRoundNote: "Current round: Jul 30 – Aug 6, 2026 (KST) — next reset Aug 6, 3PM KST. Estimated from the last confirmed round date; verify on-site.",
-    tutorialSteps: [
-      "Open the STARNEWS website (starnewskorea.com) or install the STARPOLL app — it's published by Money Today Co., the company behind STARNEWS, and is the official app tied to this poll and the AAA awards.",
-      "Find the \"Star Ranking\" or \"Star Idol\" section — the Male Idol category is where BTS members are ranked against other male idols.",
-      "Search for Jungkook and open his profile.",
-      "Cast your vote for the current weekly round. Voting on mobile also gets you a voting certificate.",
-      "Come back after the round resets (Monday 3PM KST) to vote in the next round — it's ongoing, not a one-time vote."
-    ],
-    tutorialNote: "This is a recurring media-outlet poll, not a dedicated BTS or award-show vote — it's included because it's the only currently-live, verifiable place fans are voting for individual members by name. Exact in-app tap sequence may vary; the site/app is the safe, official starting point."
-  }
+const votings = [
+  {id:"tma2026", status:"active", award:"The Fact Music Awards (TMA)", nominee:"BTS (Group)", category:"Artist", platform:"Website", priority:"High",
+    officialUrl:"https://tmastar.thefact.co.kr", requirements:"Free account, one vote per round, email verification required.",
+    closesAt: Date.now()+1000*60*60*30, addedAt: Date.now()-1000*60*60*10,
+    about:"TMA is one of the biggest fan-voted award shows in K-pop, combining fan votes with music chart performance.",
+    tutorial:{account:"Register with your email on the official TMA voting site and verify via the confirmation link.",
+      currency:"No paid currency needed — one free vote per round per verified account.",
+      cast:"Select the category, choose BTS, and confirm your vote.",
+      limit:"One vote per account per round.",
+      rules:"Do not create multiple accounts — duplicates may be flagged and voided.",
+      tips:"Vote early in each round since some rounds close without notice."}},
+  {id:"jma2026", status:"active", award:"Japan Music Awards (JMA)", nominee:"BTS (Group)", category:"Song", platform:"Website", priority:"Medium",
+    officialUrl:"https://jma.jp", requirements:"Account login required, one vote per day.",
+    closesAt: Date.now()+1000*60*60*72, addedAt: Date.now()-1000*60*60*2,
+    about:"JMA recognizes top artists and songs across the Japanese and international music market.",
+    tutorial:{account:"Create a free account on the JMA official website with your email.",
+      currency:"No currency — daily free vote resets every 24 hours.",
+      cast:"Navigate to Song category, find BTS's entry, tap vote.",
+      limit:"One vote per day per account.",
+      rules:"VPNs may cause region-lock errors.",
+      tips:"Set a daily reminder so you don't miss a day."}},
+  {id:"idolchamp", status:"active", award:"Idol Champ", nominee:"Jungkook", category:"Fan Vote", platform:"Android", priority:"High",
+    officialUrl:"https://www.idolchamp.com", requirements:"App install, account signup, hearts currency.",
+    closesAt: Date.now()+1000*60*45, addedAt: Date.now()-1000*60*5,
+    about:"Idol Champ is a dedicated K-pop voting app used across many award-adjacent fan votes.",
+    tutorial:{account:"Download Idol Champ and sign up with phone number or social login.",
+      currency:"Earn free hearts daily via ads/missions, or purchase extra hearts.",
+      cast:"Open the vote event, select Jungkook, choose hearts to spend, confirm.",
+      limit:"Multiple votes per day depending on hearts collected.",
+      rules:"Bot-like rapid voting patterns may be flagged.",
+      tips:"Complete daily free-heart missions before purchasing."}},
+  {id:"mubeat", status:"upcoming", award:"Mubeat", nominee:"V", category:"Music Video", platform:"iOS", priority:"Medium",
+    officialUrl:"https://mubeat.world", requirements:"Account + stars currency (earned free via app activity).",
+    opensAt: Date.now()+1000*60*60*20, addedAt: Date.now()-1000*60*30,
+    about:"Mubeat rewards fans with stars for watching official content, usable for voting.",
+    tutorial:{account:"Sign up in the Mubeat app with email or social login before voting opens.",
+      currency:"Watch official BTS content in-app to earn free stars.",
+      cast:"When voting opens, go to the event page, select V, use stars to vote.",
+      limit:"Multiple votes per day, limited by star balance.",
+      rules:"Stars expire if unused for long periods.",
+      tips:"Stock up on stars now."}},
+  {id:"starplanet", status:"upcoming", award:"Star Planet", nominee:"BTS (Group)", category:"Artist", platform:"Multi", priority:"Low",
+    officialUrl:"https://staraw.com", requirements:"Account required, free daily votes.",
+    opensAt: Date.now()+1000*60*60*96, addedAt: Date.now()-1000*60*60*5,
+    about:"Star Planet hosts multiple ongoing global idol popularity and award-adjacent votes.",
+    tutorial:{account:"Register on Star Planet website or app using email.",
+      currency:"Free daily votes reset at midnight KST.",
+      cast:"Find the BTS entry under Artist category, tap vote.",
+      limit:"One free vote per day per account.",
+      rules:"Only one account per person.",
+      tips:"Complete daily missions for bonus votes."}},
+  {id:"mnetplus", status:"ended", award:"Mnet Plus", nominee:"Jimin", category:"Artist", platform:"Multi", priority:"Low",
+    officialUrl:"https://mnetplus.world", requirements:"Account required.",
+    closedAt: Date.now()-1000*60*60*24*3, addedAt: Date.now()-1000*60*60*24*20,
+    finalStatus:"Voting closed — results reflected in final chart standings.",
+    about:"Mnet Plus is the voting arm connected to Mnet's award shows and charts.",
+    tutorial:{account:"This voting has ended.", currency:"N/A", cast:"N/A", limit:"N/A", rules:"N/A",
+      tips:"Check the Active tab for currently open Mnet Plus votes."}}
 ];
 
-let state = {
-  activeTab: "active",
-  activeMember: "All",
-  search: "",
-  sort: "deadline",
-  lastVoted: {},
-  streaks: {},
-  notifEnabled: false,
-  seenUpcomingIds: []
-};
+const news = [
+  {title:"TMA voting round 3 now open", date:"2 hours ago", body:"A new voting round has opened for The Fact Music Awards — BTS nominated in the Artist category."},
+  {title:"JMA extends voting deadline", date:"1 day ago", body:"Japan Music Awards has extended their voting window by 48 hours due to high server traffic."},
+  {title:"Idol Champ adds bonus heart event", date:"3 days ago", body:"A limited-time bonus heart mission has been added for the Jungkook fan vote event."}
+];
 
-const STORAGE_KEY = "vote-tracker-data";
+const calendarEvents = [
+  {month:"January", event:"Golden Disc Awards voting period"},
+  {month:"March", event:"Japan Music Awards (JMA) nominations open"},
+  {month:"August", event:"The Fact Music Awards (TMA) preliminary rounds"},
+  {month:"October", event:"Mnet Asian Music Awards (MAMA) fan voting"},
+  {month:"December", event:"Year-end idol popularity votes across multiple apps"}
+];
 
-async function loadData(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, false);
-    if(res && res.value){
-      const parsed = JSON.parse(res.value);
-      state.lastVoted = parsed.lastVoted || {};
-      state.streaks = parsed.streaks || {};
-      state.notifEnabled = parsed.notifEnabled || false;
-      state.seenUpcomingIds = parsed.seenUpcomingIds || [];
-    }
-  } catch(e){
-    // no saved data yet, defaults are fine
-  }
-  render();
-}
+const notifItems = [
+  {icon:'🆕', text:'JMA voting just opened — vote now for BTS!'},
+  {icon:'⏰', text:'Idol Champ (Jungkook) closes in under 1 hour.'},
+  {icon:'📢', text:'TMA extended their deadline by 48 hours.'}
+];
 
-async function saveData(){
-  try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify({
-      lastVoted: state.lastVoted,
-      streaks: state.streaks,
-      notifEnabled: state.notifEnabled,
-      seenUpcomingIds: state.seenUpcomingIds
-    }), false);
-  } catch(e){ console.error("save failed", e); }
-}
+let currentUser = JSON.parse(localStorage.getItem('bts_votings_user') || 'null');
 
-function daysLeft(deadline){
-  if(!deadline) return null;
-  const d = new Date(deadline + "T23:59:59");
-  const now = new Date();
-  return (d - now) / (1000*60*60*24);
-}
-
-function isEnded(v){
-  if(!v.deadline) return false;
-  return daysLeft(v.deadline) < 0;
-}
-
-// Single source of truth for what tab a vote belongs in.
-// Ended always wins and hides the vote from BOTH tabs.
-function getStatus(v){
-  if(isEnded(v)) return "ended";
-  if(v.status === "upcoming") return "upcoming";
-  return "active";
-}
-
-function fmtCountdown(deadline){
-  if(!deadline) return {big:"—", small:"NO DATE", pct:0, urgent:false};
-  const dl = daysLeft(deadline);
-  if(dl === null) return {big:"—", small:"NO DATE", pct:0, urgent:false};
-  if(dl < 0) return {big:"0", small:"ENDED", pct:0, urgent:false, ended:true};
-  const urgent = dl < 2;
-  if(dl < 1){
-    const hrs = Math.max(0, Math.round(dl*24));
-    return {big:hrs, small:"HRS LEFT", pct: Math.min(1, dl/7), urgent:true};
-  }
-  return {big: Math.ceil(dl), small:"DAYS LEFT", pct: Math.min(1, dl/14), urgent};
-}
-
-function fmtCeremonyCountdown(ceremonyDate){
-  if(!ceremonyDate) return null;
-  const d = new Date(ceremonyDate + "T00:00:00");
-  const days = Math.ceil((d - new Date()) / (1000*60*60*24));
-  if(days < 0) return null;
-  return days;
-}
-
-function renderRing(pct, urgent, ended){
-  const r = 27, c = 2*Math.PI*r;
-  const offset = c - (ended ? c : pct*c);
-  const color = ended ? "var(--text-faint)" : urgent ? "var(--urgent)" : "var(--purple)";
-  return `<svg width="64" height="64" viewBox="0 0 64 64">
-    <circle class="ring-bg" cx="32" cy="32" r="${r}"></circle>
-    <circle class="ring-fg" cx="32" cy="32" r="${r}" stroke="${color}"
-      stroke-dasharray="${c}" stroke-dashoffset="${offset}"></circle>
-  </svg>`;
-}
-
-function priorityRank(p){ return {high:0, medium:1, low:2}[p] ?? 3; }
-
-function cooldownMsLeft(v){
-  const last = state.lastVoted[v.id];
-  if(!last) return 0;
-  const cdMs = (v.cooldownHours || 24) * 3600 * 1000;
-  return Math.max(0, cdMs - (Date.now() - last));
-}
-
-function fmtDuration(ms){
-  const totalMin = Math.ceil(ms / 60000);
-  const h = Math.floor(totalMin / 60);
-  const m = totalMin % 60;
-  if(h <= 0) return `${m}m`;
-  return `${h}h ${m}m`;
-}
-
-function filteredSorted(){
-  let list = VOTES.filter(v=>{
-    if(getStatus(v) !== state.activeTab) return false;
-    const memberOk = state.activeMember === "All" || v.member === state.activeMember;
-    const q = state.search.trim().toLowerCase();
-    const searchOk = !q || (v.show+" "+v.category+" "+v.member).toLowerCase().includes(q);
-    return memberOk && searchOk;
-  });
-  if(state.activeTab === "upcoming"){
-    list.sort((a,b)=>{
-      const da = a.ceremonyDate ? new Date(a.ceremonyDate) : new Date(8640000000000000);
-      const db = b.ceremonyDate ? new Date(b.ceremonyDate) : new Date(8640000000000000);
-      return da - db;
-    });
-    return list;
-  }
-  if(state.sort === "deadline"){
-    list.sort((a,b)=>{
-      const da = a.deadline ? new Date(a.deadline) : new Date(8640000000000000);
-      const db = b.deadline ? new Date(b.deadline) : new Date(8640000000000000);
-      return da - db;
-    });
-  } else {
-    list.sort((a,b)=> priorityRank(a.priority) - priorityRank(b.priority));
-  }
-  return list;
-}
-
-function renderActiveCard(v){
-  const cd = fmtCountdown(v.deadline);
-  const msLeft = cooldownMsLeft(v);
-  const inCooldown = msLeft > 0;
-  const streak = state.streaks[v.id] || 0;
-  const safeLink = (v.link || "").startsWith("http") ? v.link : "https://" + (v.link || "");
-  const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
-  return `
-  <div class="card priority-${v.priority}">
-    <div class="ring-wrap">
-      ${renderRing(cd.pct, cd.urgent, cd.ended)}
-      <div class="ring-label"><div class="d">${cd.big}</div><div class="u">${cd.small}</div></div>
-    </div>
-    <div class="card-main">
-      <div class="card-top">
-        ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
-        <span class="badge member">${v.member}</span>
-      </div>
-      <p class="card-title">${v.show}</p>
-      <p class="card-sub">${v.category}</p>
-      <div class="card-meta">
-        ${v.deadline ? `<span>📅 Ends ${v.deadline}</span>` : v.currentRoundNote ? `<span>📅 ${v.currentRoundNote}</span>` : `<span>📅 Check official page for deadline</span>`}
-        ${v.limit ? `<span>🗳️ ${v.limit}</span>` : ''}
-        <span>⚑ ${v.priority.toUpperCase()} priority</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <div class="vote-row">
-        <a class="vote-btn" href="${v.link ? safeLink : '#'}" target="_blank" rel="noopener noreferrer">Vote now →</a>
-        ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="How to vote">📖 Tutorial</button>` : ''}
-      </div>
-      <button class="track-btn ${inCooldown ? 'cooldown' : ''}" data-id="${v.id}" ${inCooldown ? 'disabled' : ''}>
-        ${inCooldown ? `✓ Voted · next in ${fmtDuration(msLeft)}` : 'Mark voted'}
-      </button>
-      ${streak>0 ? `<div class="streak">🔥 ${streak} day streak</div>` : ''}
-    </div>
-  </div>`;
-}
-
-function renderUpcomingCard(v){
-  const daysToCeremony = fmtCeremonyCountdown(v.ceremonyDate);
-  const safeLink = v.link ? ((v.link || "").startsWith("http") ? v.link : "https://" + v.link) : null;
-  const hasTut = Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0;
-  return `
-  <div class="card is-upcoming">
-    <div class="upcoming-badge-wrap">🔜</div>
-    <div class="card-main">
-      <div class="card-top">
-        ${v.official ? '<span class="badge official">✓ Official</span>' : ''}
-        <span class="badge upcoming">Not open yet</span>
-        <span class="badge member">${v.member}</span>
-      </div>
-      <p class="card-title">${v.show}</p>
-      <p class="card-sub">${v.category}</p>
-      <div class="card-meta">
-        ${v.ceremonyDate ? `<span>🎤 Ceremony ${v.ceremonyDate}${daysToCeremony !== null ? ` · ${daysToCeremony}d away` : ''}</span>` : ''}
-      </div>
-      ${v.opensNote ? `<p class="card-sub" style="margin-top:8px;">${v.opensNote}</p>` : ''}
-    </div>
-    <div class="card-actions">
-      <div class="vote-row">
-        ${safeLink ? `<a class="vote-btn info-link" href="${safeLink}" target="_blank" rel="noopener noreferrer">Official info →</a>` : `<span class="vote-btn info-link" style="cursor:default;">Link TBA</span>`}
-        ${hasTut ? `<button class="tut-btn" data-id="${v.id}" title="Preview">📖 Preview</button>` : ''}
-      </div>
-    </div>
-  </div>`;
-}
-
-function render(){
-  // tabs
-  document.querySelectorAll(".tab").forEach(el=>{
-    el.classList.toggle("active", el.dataset.tab === state.activeTab);
-  });
-
-  const activeCount = VOTES.filter(v=>getStatus(v)==="active").length;
-  const upcomingCount = VOTES.filter(v=>getStatus(v)==="upcoming").length;
-  document.getElementById("countActive").textContent = activeCount;
-  document.getElementById("countUpcoming").textContent = upcomingCount;
-
-  const chipWrap = document.getElementById("memberChips");
-  chipWrap.innerHTML = MEMBERS.map(m=>
-    `<div class="chip ${state.activeMember===m?'active':''}" data-member="${m}">${m}</div>`
-  ).join("");
-  chipWrap.querySelectorAll(".chip").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      state.activeMember = el.dataset.member;
-      render();
-    });
-  });
-
-  document.getElementById("sortSelect").style.display = state.activeTab === "upcoming" ? "none" : "";
-
-  const list = filteredSorted();
-  const grid = document.getElementById("cardGrid");
-
-  if(list.length === 0){
-    const msg = state.activeTab === "upcoming"
-      ? "No upcoming votes match — check back as new shows get confirmed."
-      : "No votes match — try a different member, search term, or check the Upcoming tab.";
-    grid.innerHTML = `<div class="empty"><div class="big">Nothing here yet</div>${msg}</div>`;
-  } else {
-    grid.innerHTML = list.map(v=> state.activeTab === "upcoming" ? renderUpcomingCard(v) : renderActiveCard(v)).join("");
-
-    grid.querySelectorAll(".track-btn:not(.cooldown)").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = btn.dataset.id;
-        const v = VOTES.find(x=>x.id===id);
-        const cdMs = (v?.cooldownHours || 24) * 3600 * 1000;
-        const prevLast = state.lastVoted[id];
-        if(prevLast && (Date.now() - prevLast) <= cdMs * 2){
-          state.streaks[id] = (state.streaks[id] || 0) + 1;
-        } else {
-          state.streaks[id] = 1;
-        }
-        state.lastVoted[id] = Date.now();
-        saveData();
-        render();
-      });
-    });
-
-    grid.querySelectorAll(".tut-btn").forEach(btn=>{
-      btn.addEventListener("click", ()=> openTutorial(btn.dataset.id));
-    });
-  }
-
-  document.getElementById("statActive").textContent = activeCount;
-  document.getElementById("statUpcoming").textContent = upcomingCount;
-  document.getElementById("statUrgent").textContent = VOTES.filter(v=> getStatus(v)==="active" && v.deadline && daysLeft(v.deadline) < 2).length;
-  document.getElementById("statDone").textContent = VOTES.filter(v=> getStatus(v)==="active" && cooldownMsLeft(v) === 0).length;
-  const bestStreak = Math.max(0, ...Object.values(state.streaks));
-  document.getElementById("statStreak").textContent = bestStreak;
-
-  const notifBtn = document.getElementById("notifBtn");
-  const notifLabel = document.getElementById("notifLabel");
-  notifBtn.classList.toggle("on", state.notifEnabled);
-  notifLabel.textContent = state.notifEnabled ? "Reminders on" : "Enable reminders";
-}
-
-document.querySelectorAll(".tab").forEach(el=>{
-  el.addEventListener("click", ()=>{
-    state.activeTab = el.dataset.tab;
-    render();
-  });
-});
-
-const tutOverlay = document.getElementById("tutOverlay");
-function openTutorial(voteId){
-  const v = VOTES.find(x=>x.id===voteId);
-  if(!v) return;
-  document.getElementById("tutTitle").textContent = `How to vote — ${v.show}`;
-  document.getElementById("tutSub").textContent = v.category;
-  if(Array.isArray(v.tutorialSteps) && v.tutorialSteps.length > 0){
-    document.getElementById("tutSteps").innerHTML = v.tutorialSteps.map((step, i)=>
-      `<li><span class="tut-num">${i+1}</span><span>${step}</span></li>`
-    ).join("");
-  } else {
-    document.getElementById("tutSteps").innerHTML = `<li><span>No steps yet — this vote hasn't opened, so the exact flow isn't confirmed. Check back once it goes live.</span></li>`;
-  }
-  document.getElementById("tutFoot").textContent = v.tutorialNote || "";
-  document.getElementById("tutFoot").style.display = v.tutorialNote ? "block" : "none";
-  const link = v.link;
-  const hasLink = !!link;
-  const safeLink = hasLink ? ((link || "").startsWith("http") ? link : "https://" + link) : "#";
-  const voteLinkEl = document.getElementById("tutVoteLink");
-  voteLinkEl.href = safeLink;
-  voteLinkEl.textContent = getStatus(v) === "upcoming" ? "Open official info page →" : "Open voting page →";
-  voteLinkEl.style.display = hasLink ? "block" : "none";
-  tutOverlay.classList.add("open");
-}
-document.getElementById("tutClose").addEventListener("click", ()=> tutOverlay.classList.remove("open"));
-tutOverlay.addEventListener("click", (e)=>{ if(e.target === tutOverlay) tutOverlay.classList.remove("open"); });
-
-const searchInput = document.getElementById("searchInput");
-searchInput.addEventListener("input", (e)=>{
-  state.search = e.target.value;
-  render();
-});
-document.getElementById("sortSelect").addEventListener("change", (e)=>{
-  state.sort = e.target.value;
-  render();
-});
-
-document.getElementById("notifBtn").addEventListener("click", async ()=>{
-  if(!("Notification" in window)){
-    alert("This browser doesn't support notifications.");
-    return;
-  }
-  if(state.notifEnabled){
-    state.notifEnabled = false;
-    saveData();
-    render();
-    return;
-  }
-  const perm = await Notification.requestPermission();
-  if(perm === "granted"){
-    state.notifEnabled = true;
-    saveData();
-    render();
-    new Notification("💜 Reminders on", { body: "We'll nudge you here when a vote is closing soon, a cooldown ends, or an upcoming vote goes live. Keep this tab open to receive alerts." });
-    checkAlerts();
-  } else {
-    alert("Notifications were blocked. You can still track deadlines and cooldowns visually with the countdown rings and buttons.");
-  }
-});
-
-function checkAlerts(){
-  if(!state.notifEnabled || Notification.permission !== "granted") return;
-  VOTES.forEach(v=>{
-    const status = getStatus(v);
-    if(status === "active" && v.deadline){
-      const dl = daysLeft(v.deadline);
-      if(dl !== null && dl >= 0 && dl < 1){
-        new Notification("⏰ Voting closes soon!", { body: `${v.show} — ${v.category} closes in under 24h.` });
+function updateAccountBtn(){
+  const btn = document.getElementById('accountBtn');
+  if(currentUser){
+    btn.innerHTML = `<span class="avatar-circle">${currentUser.name.charAt(0).toUpperCase()}</span>${currentUser.name.split(' ')[0]}`;
+    btn.onclick = () => {
+      if(confirm('Signed in as ' + currentUser.name + ' (' + currentUser.email + '). Sign out?')){
+        localStorage.removeItem('bts_votings_user'); currentUser = null; updateAccountBtn();
       }
-    }
-    if(status === "active" && cooldownMsLeft(v) === 0 && state.lastVoted[v.id]){
-      new Notification("🗳️ Ready to vote again", { body: `${v.show} — ${v.category} is ready for your next vote.` });
-    }
+    };
+  } else {
+    btn.innerHTML = `<span class="avatar-circle">G</span>Guest`;
+    btn.onclick = openAuthModal;
+  }
+}
+function openAuthModal(){ document.getElementById('authOverlay').style.display='flex'; }
+function closeAuthModal(){ document.getElementById('authOverlay').style.display='none'; localStorage.setItem('bts_votings_seen_popup','1'); }
+function doSignIn(){
+  const name = document.getElementById('authName').value.trim();
+  const email = document.getElementById('authEmail').value.trim();
+  if(!name || !email){ alert('Please enter both a name and email.'); return; }
+  currentUser = {name, email};
+  localStorage.setItem('bts_votings_user', JSON.stringify(currentUser));
+  localStorage.setItem('bts_votings_seen_popup','1');
+  updateAccountBtn(); closeAuthModal();
+}
+
+window.addEventListener('load', () => {
+  updateAccountBtn();
+  const seen = localStorage.getItem('bts_votings_seen_popup');
+  if(!currentUser && !seen) setTimeout(openAuthModal, 600);
+  populateAwardFilter();
+  renderHero(); renderTodayList(); renderHomeCalendar(); renderHomeNotif(); renderHomeNews();
+  renderVotings(); renderCalendar(); renderNews(); renderNotifications();
+  setTheme(localStorage.getItem('bts_votings_theme') || 'dark');
+});
+
+function toggleDark(){ setTheme(document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); }
+function setTheme(t){
+  document.body.setAttribute('data-theme', t);
+  document.getElementById('darkToggle').textContent = t==='dark' ? '☀️' : '🌙';
+  localStorage.setItem('bts_votings_theme', t);
+}
+let currentLang='en';
+function setLang(l){ currentLang=l; renderVotings(); }
+
+function populateAwardFilter(){
+  const sel = document.getElementById('filterAward'); const seen = new Set();
+  votings.forEach(v=>{ if(!seen.has(v.award)){ seen.add(v.award); const o=document.createElement('option'); o.value=v.award; o.textContent=v.award; sel.appendChild(o); }});
+}
+
+let activeTab='home';
+function showTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.getElementById('page-home').style.display = tab==='home' ? 'block':'none';
+  document.getElementById('page-votings').style.display = ['active','upcoming','ended'].includes(tab) ? 'block':'none';
+  ['calendar','news','howvoting','faq','notifications'].forEach(p=>{
+    document.getElementById('page-'+p).style.display = (tab===p) ? 'block':'none';
+  });
+  if(['active','upcoming','ended'].includes(tab)){
+    const titles = {active:"Active official votings", upcoming:"Upcoming votings", ended:"Ended votings (archive)"};
+    document.getElementById('sectionTitle').textContent = titles[tab];
+    renderVotings();
+  }
+  window.scrollTo(0,0);
+}
+
+function fmtCountdown(ms){
+  if(ms<=0) return "Closed";
+  const totalMin = Math.floor(ms/60000);
+  const d = Math.floor(totalMin/1440), h = Math.floor((totalMin%1440)/60), m = totalMin%60;
+  if(d>0) return d+"d "+h+"h left";
+  if(h>0) return h+"h "+m+"m left";
+  return m+"m left";
+}
+function dParts(ms){
+  ms = Math.max(0,ms);
+  const totalSec = Math.floor(ms/1000);
+  return {d:Math.floor(totalSec/86400), h:Math.floor((totalSec%86400)/3600), m:Math.floor((totalSec%3600)/60), s:totalSec%60};
+}
+
+function topPriority(){ return votings.filter(v=>v.status==='active').sort((a,b)=>a.closesAt-b.closesAt)[0]; }
+
+function renderHero(){
+  const top = topPriority();
+  if(!top){ document.getElementById('heroTitle').textContent='No active votings right now'; return; }
+  document.getElementById('heroTitle').textContent = top.award + ' — ' + top.nominee;
+  document.getElementById('heroSub').textContent = top.category + ' category · ' + top.platform + ' · ' + top.requirements;
+  document.getElementById('heroVoteBtn').onclick = ()=>window.open(top.officialUrl,'_blank');
+  const p = dParts(top.closesAt-Date.now());
+  document.getElementById('heroCountdown').innerHTML = `
+    <div class="cblock"><div class="num">${String(p.d).padStart(2,'0')}</div><div class="lbl">DAYS</div></div>
+    <div class="cblock"><div class="num">${String(p.h).padStart(2,'0')}</div><div class="lbl">HRS</div></div>
+    <div class="cblock"><div class="num">${String(p.m).padStart(2,'0')}</div><div class="lbl">MIN</div></div>
+    <div class="cblock"><div class="num">${String(p.s).padStart(2,'0')}</div><div class="lbl">SEC</div></div>`;
+  document.getElementById('topCountdown').textContent = '⏱ ' + fmtCountdown(top.closesAt-Date.now());
+}
+
+function renderTodayList(){
+  const list = votings.filter(v=>v.status==='active').sort((a,b)=>a.closesAt-b.closesAt).slice(0,4);
+  document.getElementById('todayList').innerHTML = list.map(v=>`
+    <div class="today-row">
+      <div><div class="t-main">${v.award}</div><div class="t-sub">${v.nominee} · ${v.category}</div></div>
+      <div class="t-time">${fmtCountdown(v.closesAt-Date.now())}</div>
+    </div>`).join('') || '<div class="empty">No active votings.</div>';
+}
+function renderHomeCalendar(){
+  document.getElementById('homeCalendar').innerHTML = calendarEvents.slice(0,5).map(c=>`<div class="cal-row"><b>${c.month}</b><span>${c.event}</span></div>`).join('');
+}
+function renderHomeNotif(){
+  document.getElementById('homeNotif').innerHTML = notifItems.map(i=>`<div class="notif-row"><span>${i.icon}</span><span>${i.text}</span></div>`).join('');
+}
+function renderHomeNews(){
+  document.getElementById('homeNews').innerHTML = news.slice(0,3).map(n=>`<div class="notif-row"><span>📰</span><span><b>${n.title}</b><br><span style="color:var(--muted);font-size:11.5px;">${n.date}</span></span></div>`).join('');
+}
+
+function renderVotings(){
+  const grid = document.getElementById('votingGrid');
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const member = document.getElementById('filterMember').value;
+  const award = document.getElementById('filterAward').value;
+  const platform = document.getElementById('filterPlatform').value;
+  const category = document.getElementById('filterCategory').value;
+  const tab = ['active','upcoming','ended'].includes(activeTab) ? activeTab : 'active';
+
+  let list = votings.filter(v=>v.status===tab).filter(v=>{
+    const text=(v.award+" "+v.nominee+" "+v.category).toLowerCase();
+    if(search && !text.includes(search)) return false;
+    if(member && v.nominee!==member) return false;
+    if(award && v.award!==award) return false;
+    if(platform && v.platform!==platform) return false;
+    if(category && v.category!==category) return false;
+    return true;
+  });
+
+  grid.innerHTML='';
+  if(list.length===0){ grid.innerHTML=`<div class="empty">No votings match your filters right now.</div>`; return; }
+
+  list.forEach(v=>{
+    const card=document.createElement('div'); card.className='card';
+    let badges=`<span class="badge badge-official">✅ Official</span>`;
+    if(v.priority) badges+=`<span class="badge badge-priority-${v.priority.toLowerCase()}">${v.priority} priority</span>`;
+    if(v.addedAt && Date.now()-v.addedAt<1000*60*60*12) badges+=`<span class="badge badge-new">New</span>`;
+    if(v.status==='active' && (v.closesAt-Date.now())<1000*60*60*3) badges+=`<span class="badge badge-closing">Closing soon</span>`;
+    let timerLine='';
+    if(v.status==='active') timerLine=`<div class="countdown">⏱ ${fmtCountdown(v.closesAt-Date.now())}</div>`;
+    if(v.status==='upcoming') timerLine=`<div class="countdown">🕒 Opens in ${fmtCountdown(v.opensAt-Date.now())}</div>`;
+    if(v.status==='ended') timerLine=`<div class="meta"><span><b>Closed:</b> ${new Date(v.closedAt).toLocaleDateString()}</span><span><b>Status:</b> ${v.finalStatus}</span></div>`;
+    card.innerHTML=`
+      <div><div class="badges">${badges}</div><h4 style="margin-top:8px;">${v.award}</h4></div>
+      <div class="meta">
+        <span><b>Nominee:</b> ${v.nominee}</span>
+        <span><b>Category:</b> ${v.category}</span>
+        <span><b>Platform:</b> ${v.platform}</span>
+        <span><b>Requirements:</b> ${v.requirements}</span>
+      </div>
+      ${timerLine}
+      <div class="card-actions">
+        ${v.status!=='ended' ? `<a class="vote-now" href="${v.officialUrl}" target="_blank" rel="noopener">Vote now ↗</a>` : ''}
+        <button class="tutorial-btn" onclick="openTutorial('${v.id}')">Tutorial</button>
+      </div>`;
+    grid.appendChild(card);
   });
 }
+
+function openTutorial(id){
+  const v=votings.find(x=>x.id===id); if(!v) return;
+  document.getElementById('tutTitle').textContent=v.award+' — voting tutorial';
+  document.getElementById('tutSub').textContent=v.nominee+' · '+v.category+' · '+v.platform;
+  document.getElementById('tutBody').innerHTML=`
+    <p>${v.about}</p>
+    <h4>1. Create an account</h4><p>${v.tutorial.account}</p>
+    <h4>2. Collect voting currency</h4><p>${v.tutorial.currency}</p>
+    <h4>3. Cast your vote</h4><p>${v.tutorial.cast}</p>
+    <h4>4. Daily voting limits</h4><p>${v.tutorial.limit}</p>
+    <h4>5. Rules to avoid invalid votes</h4><p>${v.tutorial.rules}</p>
+    <h4>6. Tips for first-time users</h4><p>${v.tutorial.tips}</p>
+    <h4>Official deadline</h4><p>${v.status==='ended' ? 'This voting has ended.' : (v.closesAt ? new Date(v.closesAt).toLocaleString() : 'Opens '+new Date(v.opensAt).toLocaleString())}</p>
+    <p style="margin-top:14px;font-size:11.5px;color:var(--muted);">Tutorial by BTS Votings Hub — created by @bts_votings on YT</p>`;
+  document.getElementById('tutorialOverlay').style.display='flex';
+}
+function closeTutorial(){ document.getElementById('tutorialOverlay').style.display='none'; }
+
+function renderCalendar(){ document.getElementById('calendarList').innerHTML = calendarEvents.map(c=>`<div class="cal-row"><b>${c.month}</b><span>${c.event}</span></div>`).join(''); }
+function renderNews(){ document.getElementById('newsList').innerHTML = news.map(n=>`<div style="border-bottom:1px solid var(--border);padding:12px 0;"><b>${n.title}</b><div style="font-size:12px;color:var(--muted);margin:2px 0 6px;">${n.date}</div><div>${n.body}</div></div>`).join(''); }
+function renderNotifications(){ document.getElementById('notifList').innerHTML = notifItems.map(i=>`<div class="notif-row"><span>${i.icon}</span><span>${i.text}</span></div>`).join(''); }
 
 setInterval(()=>{
-  if(document.activeElement !== searchInput) render();
-  checkAlerts();
-}, 60 * 1000);
-
-loadData();
+  renderHero();
+  if(activeTab==='home'){ renderTodayList(); }
+  if(['active','upcoming'].includes(activeTab)) renderVotings();
+}, 15000);
 </script>
 </body>
 </html>
