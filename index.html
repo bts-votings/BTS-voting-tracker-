@@ -394,6 +394,56 @@ document.getElementById('lastUpdated').textContent = "Aug 13, 2026 · 6:20 PM KS
 
 const votings = [
   {
+    id:"vma2026-song",
+    status:"active",
+    award:"MTV Video Music Awards (VMA) 2026",
+    round:"Song of the Year",
+    nominee:"BTS (Group)",
+    category:"Song",
+    voteType:"Award",
+    voteMethod:"Daily",
+    platforms:["Website"],
+    officialSources:["vote.mtv.com"],
+    officialUrl:"https://vote.mtv.com",
+    requirements:"No account required. Vote once per category per day per device/browser at vote.mtv.com.",
+    startsAt:"2026-08-18T00:00:00-04:00",
+    closesAt:"2026-09-25T18:00:00-04:00",
+    addedAt:"2026-08-19T09:00:00-04:00",
+    timezone:"America/New_York",
+    verifiedAt:"2026-08-19T09:00:00-04:00",
+    verificationStatus:"verified",
+    about:"BTS earned a Song of the Year nomination for \"Swim\" at the 2026 MTV Video Music Awards, competing alongside Madonna & Sabrina Carpenter (\"Bring Your Love\"), Ella Langley, HUNTR/X, Olivia Dean, PinkPantheress, and RAYE. Fan voting is open on vote.mtv.com in 13 categories through Sept 25; the ceremony airs Sept 27 live from Los Angeles on CBS, MTV, and Paramount+.",
+    whyIncluded:"Major award voting · Official MTV ballot · Limited voting window",
+    tutorial:{
+      "Website":{account:"No account or login needed — go directly to vote.mtv.com.",currency:"No voting currency system; the site allows one vote per category per day per device/browser.",cast:"On vote.mtv.com, find the Song of the Year category and select BTS – \"Swim\", then submit.",limit:"One vote per category per day per device. Using multiple browsers/devices allows more daily votes.",rules:"Vote directly on vote.mtv.com only — be wary of unofficial third-party sites claiming to be MTV.",tips:"Vote daily through the Sept 25, 6 PM ET deadline; only Best New Artist stays open into the live show."}
+    }
+  },
+  {
+    id:"vma2026-kpop",
+    status:"active",
+    award:"MTV Video Music Awards (VMA) 2026",
+    round:"Best K-Pop",
+    nominee:"BTS (Group)",
+    category:"Fan Vote",
+    voteType:"Award",
+    voteMethod:"Daily",
+    platforms:["Website"],
+    officialSources:["vote.mtv.com"],
+    officialUrl:"https://vote.mtv.com",
+    requirements:"No account required. Vote once per category per day per device/browser at vote.mtv.com.",
+    startsAt:"2026-08-18T00:00:00-04:00",
+    closesAt:"2026-09-25T18:00:00-04:00",
+    addedAt:"2026-08-19T09:00:00-04:00",
+    timezone:"America/New_York",
+    verifiedAt:"2026-08-19T09:00:00-04:00",
+    verificationStatus:"verified",
+    about:"BTS is nominated for Best K-Pop with \"Swim\" at the 2026 VMAs, competing against BLACKPINK (\"Jump\"), CORTIS (\"Redred\"), KATSEYE (\"Pinky Up\"), LE SSERAFIM feat. j-hope of BTS (\"Spaghetti\"), and LISA (\"Dream\"). Fan voting is open on vote.mtv.com through Sept 25.",
+    whyIncluded:"Major award voting · Official MTV ballot · Limited voting window",
+    tutorial:{
+      "Website":{account:"No account or login needed — go directly to vote.mtv.com.",currency:"No voting currency system; the site allows one vote per category per day per device/browser.",cast:"On vote.mtv.com, find the Best K-Pop category and select BTS – \"Swim\", then submit.",limit:"One vote per category per day per device. Using multiple browsers/devices allows more daily votes.",rules:"Vote directly on vote.mtv.com only — be wary of unofficial third-party sites claiming to be MTV.",tips:"Note LE SSERAFIM's \"Spaghetti\" entry also features j-hope of BTS, but the BTS group entry to vote for is \"Swim\"."}
+    }
+  },
+  {
     id:"jma2026-semifinal",
     status:"active",
     award:"Jupiter Music Awards (JMA) 2026",
@@ -626,6 +676,7 @@ const votings = [
 ];
 
 const news = [
+  {title:"BTS lands 2 nominations at 2026 VMAs — voting now open", date:"Aug 18, 2026 · 10:00 AM ET", source:"MTV / vote.mtv.com", affected:"VMA 2026 — Song of the Year, Best K-Pop", body:"MTV announced 2026 VMA nominations Aug 18. BTS earned two nods for \"Swim\": Song of the Year and Best K-Pop. Fan voting opened the same day on vote.mtv.com across 13 categories, closing Sept 25 at 6 PM ET. The ceremony airs Sept 27 live from Los Angeles on CBS, MTV, and Paramount+.", link:"https://vote.mtv.com"},
   {title:"JMA Semi-Finals entering final 3 days", date:"Aug 13, 2026 · 5:00 PM KST", source:"Idol Champ / JMA official", affected:"JMA 2026 Semi-Finals", body:"The JMA 2026 Semi-Finals voting period closes Aug 16 at 1:59 AM KST. Votes across all five participating apps (Idol Champ, Mubeat, MY1PICK, Fancast, Muniverse) are combined to determine the Top 5 cutoff. ARMYs should vote daily on every app.", link:"https://www.idolchamp.com"},
   {title:"Billboard Korea Fan Choice Week 33 closes tonight", date:"Aug 13, 2026 · 3:00 PM KST", source:"Mnet Plus / Billboard Korea", affected:"Billboard Korea Fan Choice Music — Week 33", body:"Week 33 voting ends Aug 14 at 11:59 PM KST. Up to 10 free votes per device are available daily by watching ads in the Mnet Plus app.", link:"https://www.mnetplus.world"},
   {title:"TMA Summer rounds confirmed closed", date:"Aug 13, 2026 · 12:00 PM KST", source:"Fan N Star", affected:"TMA 2026 — Best Music, Fan N Star Choice, My Star", body:"All three TMA 2026 preliminary/summer rounds (Best Music — Summer Final, Fan N Star Choice, My Star) closed on Aug 3. Results have been reflected in final standings. These are now archived in the Ended section.", link:"https://en.fannstar.tf.co.kr/tma/page/main"},
@@ -633,6 +684,7 @@ const news = [
 ];
 
 const notifItems = [
+  {icon:'🎬', text:'BTS nominated for 2 VMA 2026 awards (Song of the Year, Best K-Pop) — vote daily at vote.mtv.com through Sept 25!'},
   {icon:'🚨', text:'JMA Semi-Finals close in under 3 days — vote on all 5 apps now!'},
   {icon:'⏰', text:'Billboard Korea Fan Choice Week 33 ends tonight at 11:59 PM KST.'},
   {icon:'📢', text:'TMA summer rounds confirmed closed — moved to archive.'},
@@ -708,10 +760,31 @@ function setReminder(id,val,checked){
 function closeReminder(){ document.getElementById('reminderOverlay').style.display='none'; }
 function hasReminder(id){ return !!reminders[id]; }
 
+const ENDED_RETENTION_MS = 1000*60*60*24*14; // keep ended votings visible for 14 days, then auto-remove
+
+function autoRemoveEndedVotings(){
+  const now = Date.now();
+  for(let i=votings.length-1;i>=0;i--){
+    const v = votings[i];
+    if(v.status==='active' && v.closesAt && parseDate(v.closesAt)<=now){
+      v.status='ended';
+      v.closedAt = v.closedAt || v.closesAt;
+      if(!v.result) v.result = null;
+    }
+    if(v.status==='ended' && v.closedAt && (now - parseDate(v.closedAt)) > ENDED_RETENTION_MS){
+      const idx = savedVotings.indexOf(v.id);
+      if(idx>=0){ savedVotings.splice(idx,1); localStorage.setItem('bts_votings_saved', JSON.stringify(savedVotings)); }
+      if(reminders[v.id]){ delete reminders[v.id]; localStorage.setItem('bts_votings_reminders', JSON.stringify(reminders)); }
+      votings.splice(i,1);
+    }
+  }
+}
+
 window.addEventListener('load', () => {
   updateAccountBtn();
   const seen = localStorage.getItem('bts_votings_seen_popup');
   if(!currentUser && !seen) setTimeout(openAuthModal, 600);
+  autoRemoveEndedVotings();
   populateAwardFilter();
   renderHero(); renderTodayList(); renderHomeCalendar(); renderHomeNotif(); renderHomeNews();
   renderVotings(); renderCalendar(); renderNews(); renderNotifications(); renderSaved();
@@ -1048,10 +1121,15 @@ function checkReminders(){
 }
 
 setInterval(()=>{
+  const beforeCount = votings.length;
+  autoRemoveEndedVotings();
+  const changed = votings.length !== beforeCount;
   renderHero();
-  if(activeTab==='home'){ renderTodayList(); }
-  if(['active','upcoming'].includes(activeTab)) renderVotings();
+  if(activeTab==='home'){ renderTodayList(); renderHomeCalendar(); }
+  if(['active','upcoming','ended'].includes(activeTab)) renderVotings();
+  if(activeTab==='calendar') renderCalendar();
   if(activeTab==='saved') renderSaved();
+  if(changed) populateAwardFilter();
   checkReminders();
 }, 15000);
 </script>
